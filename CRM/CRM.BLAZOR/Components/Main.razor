@@ -4,8 +4,17 @@
 @using BlazorInputFile;
 @using BlazorPro.Spinkit;
 @inherits MainBase
-
-
+<header>
+    <div>
+        @if (isHeaderLoading)
+        {
+            <p>@MessageForHeader</p>
+            <div>
+                <Pulse />
+            </div>
+        }
+    </div>
+</header>
 <div class="container">
     <SpinLoader IsLoading="@(isLoading)">
         <ContentTemplate>
@@ -410,7 +419,7 @@
         <!-- Modal content -->
         <div class="modal-content">
             <span class="close" @onclick="Close">&times;</span>
-            <p>Отправить сообщение @checkedContacts.Count людям</p>
+            <p>Добавить в рекламмную компанию @checkedContacts.Count людей</p>
             @if (SendForContacts != null)
             {
                 @foreach (var contact in SendForContacts)

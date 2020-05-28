@@ -79,6 +79,7 @@ namespace CRM.BLAZOR.Components
         protected IEnumerable<CompanyDTO> NewCompanies;
         protected IEnumerable<CompanyDTO> QualifiedCompanies;
         protected IEnumerable<CompanyDTO> NotQualifiedCompanies;
+        public CompanyRegistrationDTO NewCompany;
         /// companies div END
         /// company-information div BEGIN
         /// company-information div END
@@ -91,25 +92,29 @@ namespace CRM.BLAZOR.Components
         public string MessageModalDisplay = "none";
         public string MessageForModal = "";
         public string MessageForLoading = "";
+        public string MessageForHeader = "";
         public string ActionMessage = "";
         public string ExceptionLabel = "";
         protected IEnumerable<ContactDTO> contacts;
         protected IEnumerable<CountryDTO> countries;
         protected List<int> checkedContacts;
         public bool isLoading;
+        public bool isHeaderLoading;
         protected IEnumerable<Linkedin> Linkedins;
         protected IEnumerable<ContactDTO> SendForContacts;
         public AddLemlistStatistic AddLemlistStatistic;
         /// logs div BEGIN
         public IEnumerable<LogDTO> logs;
         public GetUserDTO currentUser;
-        public List<Task> LogTasks;
         /// controls END
         /// logs div END
         #endregion
         #region BASE_METHODS
         protected override async Task OnInitializedAsync()
         {
+            NewCompany = new CompanyRegistrationDTO();
+            AddLemlistStatistic = new AddLemlistStatistic();
+            checkedContacts = new List<int>();
             MessageForLoading = "Проверка прав доступа, ожидайте";
             isLoading = true;
             authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -117,14 +122,9 @@ namespace CRM.BLAZOR.Components
             if (user.Identity.IsAuthenticated)
             {
                 TempService.CurrentUser = await UserRegistrationService.GetCurrent(user.Identity.Name);
+                await TempService.UpdateCompanies();
+                await RenderUpdate();
             }
-            NewCompany = new CompanyRegistrationDTO();
-            AddLemlistStatistic = new AddLemlistStatistic();
-            checkedContacts = new List<int>();
-            LogTasks = new List<Task>();
-
-            await TempService.UpdateCompanies();
-            await RenderUpdate();
             isLoading = false;
             //await StartCountdown();
         }
@@ -149,7 +149,6 @@ namespace CRM.BLAZOR.Components
 
         /// prospect-finder div BEGIN
 
-        public CompanyRegistrationDTO NewCompany;
 
         /// prospect-finder div END
 
@@ -198,8 +197,6 @@ namespace CRM.BLAZOR.Components
             {
                 await TempService.UpdateCompanies();
             }
-            await RenderUpdate();
-            await InvokeAsync(StateHasChanged);
             //NavigationManager.NavigateTo("/");
             await OnInitializedAsync();
             isLoading = false;
@@ -210,9 +207,6 @@ namespace CRM.BLAZOR.Components
             isLoading = true;
             await AuthService.Logout();
             TempService.SetId(0);
-            await TempService.UpdateCompanies();
-            await RenderUpdate();
-            await InvokeAsync(StateHasChanged);
             //NavigationManager.NavigateTo("/");
             await OnInitializedAsync();
             isLoading = false;
@@ -222,10 +216,11 @@ namespace CRM.BLAZOR.Components
             TempService.SetId(id);
             SelectedId = id;
             SelectedCompany = TempService.CompanyModels.Where(p => p.Id == SelectedId).FirstOrDefault();
-            //LogTasks.Add(AddLog(id));
-            //Task.WhenAll(LogTasks.ToArray());
+            MessageForHeader = "Вывод информации для компании " + SelectedCompany.CompanyLegalName;
+            isHeaderLoading = true;
             await AddLog(id);
             await RenderUpdate();
+            isHeaderLoading = false;
             //Dispose();
         }
 
@@ -321,6 +316,8 @@ namespace CRM.BLAZOR.Components
         {
             if (SelectedId != 0)
             {
+                MessageForHeader = "Изменение статуса компании " + SelectedCompany.CompanyLegalName;
+                isHeaderLoading = true;
                 await CompanyService.SetQualified(SelectedId);
                 var company = await CompanyService.GetCompany(SelectedId);
                 QualifyCompanyModel qualified = new QualifyCompanyModel { IsQualify = true, CompanyTradingName = company.TradingName };
@@ -331,11 +328,15 @@ namespace CRM.BLAZOR.Components
             TempService.SetId(0);
             Pause();
             await RenderUpdate();
+            isHeaderLoading = false;
+            await InvokeAsync(StateHasChanged);
         }
         public async Task SetNotQualify()
         {
             if (SelectedId != 0)
             {
+                MessageForHeader = "Изменение статуса компании " + SelectedCompany.CompanyLegalName;
+                isHeaderLoading = true;
                 await CompanyService.SetNotQualified(SelectedId);
                 var company = await CompanyService.GetCompany(SelectedId);
                 QualifyCompanyModel notQualified = new QualifyCompanyModel { IsQualify = false, CompanyTradingName = company.TradingName };
@@ -345,6 +346,8 @@ namespace CRM.BLAZOR.Components
             TempService.SetId(0);
             Pause();
             await RenderUpdate();
+            isHeaderLoading = false;
+            await InvokeAsync(StateHasChanged);
         }
         async Task Pause()
         {
@@ -362,15 +365,19 @@ namespace CRM.BLAZOR.Components
                 try
                 {
                     Validator.ValidateObject(NewCompany, new ValidationContext(NewCompany));
+                    MessageForLoading = "Добавляем компанию " + NewCompany.CompanyLegalName;
+                    isLoading = true;
                     await CompanyService.CreateCompany(NewCompany);
                     ActionMessage = "Добавил новую компанию";
                     await AddLog(ActionMesage: ActionMessage + ": " + NewCompany.TradingName);
                     await TempService.UpdateCompanies();
+                    isLoading = false;
                     await Close();
                     await RenderUpdate();
                 }
                 catch (Exception ex)
                 {
+                    isLoading = false;
                     ExceptionLabel = ex.Message;
                     ExceptionLabelDisplay = "block";
                 }
@@ -400,6 +407,8 @@ namespace CRM.BLAZOR.Components
         }
         public async Task SendLemlist()
         {
+            MessageForLoading = "Отправляем в Lemlist " + SendForContacts.Count() + " контактов";
+            isLoading = true;
             var results = (await LemlistIntegrationService.AddLeadsInCampaign(SendForContacts.ToList())).ToList();
             int successResults = results.Where(p => p.Result == true).Count();
             int failResults = results.Where(p => p.Result == false).Count();
@@ -409,6 +418,7 @@ namespace CRM.BLAZOR.Components
                 failedCount = failResults
             };
             await AddLog(count: successResults);
+            isLoading = false;
             await Close();
             await OpenModalForAddLemlistStatistic();
             checkedContacts.Clear();
@@ -421,10 +431,10 @@ namespace CRM.BLAZOR.Components
         }
         public async Task FindHunter()
         {
-            
+
             if (SelectedCompany != null && SelectedCompany.Website != null)
             {
-                MessageForLoading = "Поиск контактов "+ SelectedCompany.CompanyLegalName + ", ожидайте";
+                MessageForLoading = "Поиск контактов " + SelectedCompany.CompanyLegalName + ", ожидайте";
                 isLoading = true;
                 List<Contact> FoundContacts = (await HunterIntegrationService.FindDomainContacts(SelectedCompany.Website)).ToList();
                 MessageForModal = "Найдены " + FoundContacts.Count + " новых контактов";
@@ -480,11 +490,15 @@ namespace CRM.BLAZOR.Components
                 // Alternatively it could be saved to disk, or parsed in memory, or similar
                 /*var ms = new MemoryStream();
                 await file.Data.CopyToAsync(ms);*/
+                MessageForLoading = "Загружаем файл";
+                isLoading = true;
                 using (FileStream DestinationStream = File.Create(EndDirectory + "file.csv"))
                 {
                     await file.Data.CopyToAsync(DestinationStream);
                 }
+                MessageForLoading = "Парсим файл, ожидайте, это может продолжатся несколько минут";
                 await CsvService.ImportCSV();
+                isLoading = false;
                 UploadStatus = $"Finished loading {file.Size} bytes from {file.Name}";
             }
             await RenderUpdate();
