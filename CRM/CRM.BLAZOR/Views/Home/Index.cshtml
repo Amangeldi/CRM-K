@@ -1,0 +1,27 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using CRM.BLAZOR.Components
+
+@{ Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Title - CRM.RAZOR</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link href="_content/BlazorPro.Spinkit/spinkit.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+    </header>
+    <div>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <p>gdfhjbknl;,</p>
+        }
+        <component type="typeof(Main)" render-mode="Server" />
+    </div>
+    <script src="_framework/blazor.server.js"></script>
+    <script src="~/_content/BlazorInputFile/inputfile.js"></script>
+</body>
+</html>
