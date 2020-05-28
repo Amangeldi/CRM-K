@@ -7,8 +7,12 @@
 }
 
 div {
-    border: 1px solid #f0f0f1;
-    background: #ebe5ec;
+    background-color: #2a2a2a;
+    color: #dedede;
+    font-weight: 400;
+    font-size: 14px;
+    font-family: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,sans-serif;
+    line-height: 1.35715;
 }
 
 a {
@@ -22,7 +26,13 @@ a {
 
 header {
     min-height: 100px;
-    background: #f3f3f3;
+    background-color: #2a2a2a;
+    color: #dedede;
+    font-weight: 400;
+    font-size: 14px;
+    font-family: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,sans-serif;
+    line-height: 1.35715;
+    border-bottom: solid 1px #dedede;
 }
 
 .container {
@@ -36,6 +46,7 @@ header {
     min-height: 230px;
     height: calc(100vh - 110px);
     display: grid;
+    border-right: solid 1px #dedede;
     /*grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
 }
 
@@ -44,6 +55,7 @@ header {
     }
 
 .title-new-companies {
+    border-bottom: solid 1px #dedede;
     grid-area: title-new-companies;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -57,11 +69,13 @@ header {
 .plus {
     grid-area: plus;
 }
-.upload{
+
+.upload {
     grid-area: upload;
 }
 
 .title-qualified {
+    border-bottom: solid 1px #dedede;
     grid-area: title-qualified;
 }
 
@@ -70,6 +84,7 @@ header {
 }
 
 .content {
+    border-bottom: solid 1px #dedede;
     color: #484848;
     overflow: hidden;
     overflow-y: auto;
@@ -84,6 +99,7 @@ header {
 }
 
 .title-not-qualified {
+    border-bottom: solid 1px #dedede;
     grid-area: title-not-qualified;
 }
 
@@ -98,6 +114,7 @@ header {
 }
 
 .right {
+    border-left: solid 1px #dedede;
     grid-area: c;
     min-height: 230px;
     height: calc(100vh - 110px);
@@ -108,6 +125,7 @@ header {
 }
 
 .company-information {
+    border-bottom: solid 1px #dedede;
     grid-area: company-information;
 }
 
@@ -117,6 +135,7 @@ header {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
     grid-template-areas: "not-q-div q-div";
+    border-bottom: solid 1px #dedede;
 }
 
 .prospect-finder {
@@ -131,6 +150,7 @@ header {
 
 .user {
     grid-area: user;
+    border-bottom: solid 1px #dedede;
 }
 
 .logs {
@@ -184,29 +204,34 @@ header {
 }
 
 table {
+    border-spacing: 0;
     border-collapse: collapse; /*убираем пустые промежутки между ячейками*/
     border: 3px solid grey; /*устанавливаем для таблицы внешнюю границу серого цвета толщиной 3px*/
-    color: #669;
     padding: 9px 8px;
-    background: white;
+    background: #343434;
     width: 100%;
     text-align: center;
 }
-
 tbody tr:hover td {
     color: #6699ff;
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #e6e6e6;
+    background-color: #2a2a2a;
 }
 
 th {
-    border: 1px solid grey;
+    color: #dedede;
+    text-align: center;
+    font-size: 12px;
+    padding: 1px 0 6px;
 }
 
 td {
-    border: 1px solid grey;
+    color: #dedede;
+    text-align: center;
+    font-size: 12px;
+    padding: 1px 0 6px;
 }
 
 th, td {
@@ -244,14 +269,49 @@ th, td {
     overflow: hidden;
     overflow-y: auto;
 }
-.red{
-    color:red;
+
+.red {
+    color: red;
 }
-.company-element{
-    border:none;
-    border-bottom:1px solid black;
+
+.company-element {
+    border: none;
+    border-bottom: 1px solid black;
     padding-bottom: 3px;
 }
+
     .company-element:hover {
         background: #b9b8b8;
+    }
+button {
+    padding: 9px;
+    background-color: #323232;
+    color: #dedede;
+
+}
+    button:hover {
+        background-color: #2a2a2a;
+    }
+    button:active {
+        background-color: rgba(209,209,209,.2);
+        color: #dedede;
+    }
+    button:after {
+        content: "";
+        pointer-events: none;
+        position: absolute;
+        top: -1px;
+        bottom: -1px;
+        right: -1px;
+        left: -1px;
+        border-right: 1px solid #1ca8dd;
+        border-left: 1px solid #1ca8dd;
+        border-top: 1px solid #1ca8dd;
+        border-bottom: 1px solid #1ca8dd;
+        z-index: 1;
+    }
+    button:disabled {
+        opacity: 1;
+        background-color: #1b1b1b;
+        color: #a3a3a3;
     }
