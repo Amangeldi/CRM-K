@@ -492,6 +492,7 @@ namespace CRM.BLAZOR.Components
                 await file.Data.CopyToAsync(ms);*/
                 MessageForLoading = "Загружаем файл";
                 isLoading = true;
+                ImportContactsModalDisplay = "none";
                 using (FileStream DestinationStream = File.Create(EndDirectory + "file.csv"))
                 {
                     await file.Data.CopyToAsync(DestinationStream);
