@@ -26,8 +26,7 @@ namespace CRM.BLAZOR.Services
         private readonly UserManager<User> _userManager;
         private readonly ILogService _logService; 
         private static IHttpContextAccessor _httpContextAccessor;
-        public AuthService(HttpClient httpClient,
-                           AuthenticationStateProvider authenticationStateProvider,
+        public AuthService(AuthenticationStateProvider authenticationStateProvider,
                            ILocalStorageService localStorage, ITempService tempService, 
                            IUserRegistrationService userRegistrationService, UserManager<User> userManager,
                            ILogService logService, HttpClientHandler httpClientHandler,
@@ -46,10 +45,12 @@ namespace CRM.BLAZOR.Services
         private static Uri GetAbsoluteUri()
         {
             var request = _httpContextAccessor.HttpContext.Request;
-            UriBuilder uriBuilder = new UriBuilder();
-            uriBuilder.Scheme = request.Scheme;
-            uriBuilder.Host = request.Host.Host;
-            if(request.Host.Port!=null)
+            UriBuilder uriBuilder = new UriBuilder
+            {
+                Scheme = request.Scheme,
+                Host = request.Host.Host
+            };
+            if (request.Host.Port!=null)
             {
                 uriBuilder.Port = request.Host.Port.Value;
             }

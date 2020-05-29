@@ -26,7 +26,7 @@ namespace CRM.BLL.Services
             {
                 Capital = CountryRegistrationDTO.Capital,
                 Name = CountryRegistrationDTO.Name,
-                Region = region
+                RegionId = region.Id
             };
             await db.Countries.AddAsync(country);
             await db.SaveChangesAsync();

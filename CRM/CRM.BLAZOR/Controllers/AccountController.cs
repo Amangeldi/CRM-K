@@ -22,21 +22,14 @@ namespace CRM.BLAZOR.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-        readonly UserManager<User> _userManager;
         readonly ITempService _tempService;
-        readonly ILogService _logService;
-        SignInManager<User> _signInManager;
-        IUserRegistrationService _userRegistrationService;
-        IConfiguration _configuration;
-        public AccountController(UserManager<User> userManager, ITempService tempService,
-            SignInManager<User> signInManager, IUserRegistrationService userRegistrationService,
-            ILogService logService, IConfiguration configuration)
+        readonly SignInManager<User> _signInManager;
+        readonly IConfiguration _configuration;
+        public AccountController(ITempService tempService,
+            SignInManager<User> signInManager, IConfiguration configuration)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
             _tempService = tempService;
-            _userRegistrationService = userRegistrationService;
-            _logService = logService;
             _configuration = configuration;
         }
         [HttpGet("/Login")]

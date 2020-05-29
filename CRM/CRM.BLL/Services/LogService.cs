@@ -14,7 +14,7 @@ namespace CRM.BLL.Services
 {
     public class LogService : ILogService
     {
-        ApiContext db;
+        readonly ApiContext db;
         public LogService(ApiContext context)
         {
             db = context;

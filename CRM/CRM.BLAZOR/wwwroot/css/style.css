@@ -7,12 +7,14 @@
 }
 
 div {
-    background-color: #2a2a2a;
     color: #dedede;
     font-weight: 400;
     font-size: 14px;
     font-family: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,sans-serif;
     line-height: 1.35715;
+}
+.bg-black {
+    background-color: #2a2a2a;
 }
 
 a {
@@ -25,7 +27,7 @@ a {
     }
 
 header {
-    min-height: 100px;
+    min-height: 90px;
     background-color: #2a2a2a;
     color: #dedede;
     font-weight: 400;
@@ -34,19 +36,38 @@ header {
     line-height: 1.35715;
     border-bottom: solid 1px #dedede;
 }
-
-.container {
+header div button{
+    margin: 5px;
+}
+.main{
+    height:calc(100vh - 30px);
+}
+.grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas: "a b b b c";
+    /*height: 100vh;*/
+    overflow: hidden;
+    height: calc(100% - 130px);
 }
-
+footer {
+    min-height: 30px;
+    background-color: #2a2a2a;
+    color: #dedede;
+    font-weight: 400;
+    font-size: 14px;
+    font-family: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,sans-serif;
+    line-height: 1.35715;
+    border-bottom: solid 1px #dedede;
+    overflow: hidden
+}
 .left {
     grid-area: a;
     min-height: 230px;
-    height: calc(100vh - 110px);
+    height: 100%;
     display: grid;
     border-right: solid 1px #dedede;
+    
     /*grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
 }
 
@@ -106,7 +127,7 @@ header {
 .center {
     grid-area: b;
     min-height: 230px;
-    height: calc(100vh - 110px);
+    height: 100%;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -117,7 +138,7 @@ header {
     border-left: solid 1px #dedede;
     grid-area: c;
     min-height: 230px;
-    height: calc(100vh - 110px);
+    height: 100%;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
@@ -151,6 +172,8 @@ header {
 .user {
     grid-area: user;
     border-bottom: solid 1px #dedede;
+    display:flex;
+    flex-direction:column;
 }
 
 .logs {
@@ -253,7 +276,7 @@ th, td {
 
 /* Modal Content */
 .modal-content {
-    background-color: #fefefe;
+    background-color: #2a2a2a;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;

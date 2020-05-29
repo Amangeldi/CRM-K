@@ -17,8 +17,8 @@ namespace CRM.BLL.Services
     public class CsvService : ICsvService
     {
         const string CSV_PATH = "wwwroot/files/file.csv";
-        ICompanyService _companyService;
-        ApiContext db;
+        readonly ICompanyService _companyService;
+        readonly ApiContext db;
         public CsvService(ICompanyService companyService, ApiContext context)
         {
             _companyService = companyService;
@@ -34,15 +34,13 @@ namespace CRM.BLL.Services
             List<CompanyCsvModel> Companies;
             using (StreamReader streamReader = new StreamReader(CSV_PATH))
             {
-                using (CsvReader csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-                {
-                    // указываем используемый разделитель
-                    csvReader.Configuration.Delimiter = ",";
-                    csvReader.Configuration.HeaderValidated = null;
-                    csvReader.Configuration.MissingFieldFound = null;
-                    // получаем строки
-                    Companies = csvReader.GetRecords<CompanyCsvModel>().ToList();
-                }
+                using CsvReader csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+                // указываем используемый разделитель
+                csvReader.Configuration.Delimiter = ",";
+                csvReader.Configuration.HeaderValidated = null;
+                csvReader.Configuration.MissingFieldFound = null;
+                // получаем строки
+                Companies = csvReader.GetRecords<CompanyCsvModel>().ToList();
             }
             foreach (var company in Companies ?? Enumerable.Empty<CompanyCsvModel>())
             {

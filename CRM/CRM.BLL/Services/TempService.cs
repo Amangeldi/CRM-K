@@ -21,9 +21,11 @@ namespace CRM.BLL.Services
         ICountryService countryServ;
         IUserRegistrationService userRegistrationServ;
         IServiceScopeFactory _ServiceScopeFactory;
+        IRegionService regionServ;
         public TempService(IMailFindService mailFindService, ICompanyService companyService,
             ILogService logService, ApiContext context, IUserRegistrationService userRegistrationService,
-            ICountryService countryService, IServiceScopeFactory ServiceScopeFactory)
+            ICountryService countryService, IServiceScopeFactory ServiceScopeFactory,
+            IRegionService regionService)
         {
             mailFindServ = mailFindService;
             companyServ = companyService;
@@ -32,18 +34,20 @@ namespace CRM.BLL.Services
             countryServ = countryService;
             userRegistrationServ = userRegistrationService;
             _ServiceScopeFactory = ServiceScopeFactory;
+            regionServ = regionService;
         }
         public GetUserDTO CurrentUser { get; set; }
         public IEnumerable<CompanyDTO> AllCompanies { get; set; }
         public IEnumerable<ContactDTO> Contacts { get; set; }
         public IEnumerable<CompanyContactLink> CompanyContactLinks { get; set; }
         public IEnumerable<Linkedin> Linkedins { get; set; }
-        public IEnumerable<LogDTO> logs { get; set; }
+        public IEnumerable<LogDTO> Logs { get; set; }
         public IEnumerable<CompanyDTO> NewCompanies { get; set; }
         public IEnumerable<CompanyDTO> QualifiedCompanies { get; set; }
         public IEnumerable<CompanyDTO> NotQualifiedCompanies { get; set; }
         public IEnumerable<CompanyModel> CompanyModels { get; set; }
         public IEnumerable<CountryDTO> Countries { get; set; }
+        public IEnumerable<RegionDTO> Regions { get; set; }
         private int SelectedId { get; set; }
         public async Task<IEnumerable<ContactDTO>> GetCompanyContacts(int CompanyId)
         {
@@ -67,16 +71,69 @@ namespace CRM.BLL.Services
             SelectedId = Id;
         }
 
+        public async Task UpdateAllTemp()
+        {
+            await UpdateCompanies();
+            await UpdateNewCompanies();
+            await UpdateQualifiedCompanies();
+            await UpdateNotQualifiedCompanies();
+            await UpdateCompanyContactLinks();
+            await UpdateCountries();
+            await UpdateContacts();
+            await UpdateRegions();
+            await UpdateCompanyModels();
+
+
+            await UpdateLogs();
+            
+        }
+        public async Task UpdateLogs()
+        {
+            using (var scope = _ServiceScopeFactory.CreateScope())
+            {
+                var LogService = scope.ServiceProvider.GetService<ILogService>();
+                //var _tempService = scope.ServiceProvider.GetService<ITempService>();
+                Logs = await LogService.GetLogs();
+            }
+        }
         public async Task UpdateCompanies()
         {
             AllCompanies = await companyServ.GetCompanies();
-            NewCompanies = await companyServ.GetNewCompanies();
+        }
+        public async Task UpdateNewCompanies()
+        {
+           NewCompanies = await companyServ.GetNewCompanies();
+        }
+        public async Task UpdateQualifiedCompanies()
+        {
             QualifiedCompanies = await companyServ.GetQualifiedCompanies();
+        }
+        public async Task UpdateNotQualifiedCompanies()
+        {
             NotQualifiedCompanies = await companyServ.GetNotQualifiedCompanies();
+        }
+        public async Task UpdateLinkedins()
+        {
             Linkedins = await db.Linkedins.ToListAsync();
+        }
+        public async Task UpdateCompanyContactLinks()
+        {
             CompanyContactLinks = await mailFindServ.GetCompanyContactLinks();
+        }
+        public async Task UpdateCountries()
+        {
             Countries = await countryServ.GetCountries();
+        }
+        public async Task UpdateContacts()
+        {
             Contacts = await mailFindServ.GetAllContacts();
+        }
+        public async Task UpdateRegions()
+        {
+            Regions = await regionServ.GetRegions();
+        }
+        public async Task UpdateCompanyModels()
+        {
             List<CompanyModel> companies = new List<CompanyModel>();
             await Task.Run(async () =>
             {
@@ -111,7 +168,6 @@ namespace CRM.BLL.Services
             }
             );
             CompanyModels = companies;
-            await UpdateLogs();
             /*IEnumerable<CompanyDTO> companies = await companyServ.GetCompanies();
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<CompanyDTO, CompanyModel>()
             .ForMember(p=>p.HGBasedInCountryName, p=>p.MapFrom(s=>countryServ.GetCountry(s.HGBasedInCountryId).Result.Name))
@@ -119,16 +175,6 @@ namespace CRM.BLL.Services
             .ForMember(p => p.QualificationName, p => p.MapFrom(s => qualificationServ.GetQualifications().Result.Where(p=>p.Id==s.QualificationId).FirstOrDefault().QualificationName))
             ).CreateMapper();
             companyModels  = mapper.Map<IEnumerable<CompanyDTO>, IEnumerable<CompanyModel>>(companies);*/
-        }
-
-        public async Task UpdateLogs()
-        {
-            using (var scope = _ServiceScopeFactory.CreateScope())
-            {
-                var LogService = scope.ServiceProvider.GetService<ILogService>();
-                //var _tempService = scope.ServiceProvider.GetService<ITempService>();
-                logs = await LogService.GetLogs();
-            }
         }
     }
 }

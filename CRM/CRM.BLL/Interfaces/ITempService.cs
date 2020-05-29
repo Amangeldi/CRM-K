@@ -20,11 +20,12 @@ namespace CRM.BLL.Interfaces
         IEnumerable<CompanyContactLink> CompanyContactLinks { get; set; }
         IEnumerable<Linkedin> Linkedins { get; set; }
         IEnumerable<CountryDTO> Countries { get; set; }
-        IEnumerable<LogDTO> logs { get; set; }
+        IEnumerable<LogDTO> Logs { get; set; }
+        IEnumerable<RegionDTO> Regions { get; set; }
         Task UpdateLogs();
         void SetId(int Id);
         int GetSelectedId();
-        Task UpdateCompanies();
+        Task UpdateAllTemp();
         Task<IEnumerable<ContactDTO>> GetCompanyContacts(int CompanyId);
     }
 }
