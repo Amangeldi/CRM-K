@@ -29,6 +29,7 @@ namespace CRM.BLAZOR
                     var context = services.GetRequiredService<ApiContext>();
                     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                     await SampleData.Initialize(userManager, context, rolesManager);
+
                 }
                 catch (Exception ex)
                 {

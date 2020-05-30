@@ -50,7 +50,6 @@ namespace CRM.BLL.Services
                 {
                     region = new Region { Name = company.RegionName };
                     await db.Regions.AddAsync(region);
-                    await db.SaveChangesAsync();
                 }
                 else
                 {
@@ -61,7 +60,6 @@ namespace CRM.BLL.Services
                 {
                     country = new Country { Name = company.HGBasedInCountry, RegionId = region.Id };
                     await db.Countries.AddAsync(country);
-                    await db.SaveChangesAsync();
                 }
 
                 CompanyRegistrationDTO newCompany = new CompanyRegistrationDTO
@@ -81,6 +79,7 @@ namespace CRM.BLL.Services
 
                 }
             }
+            await db.SaveChangesAsync();
         }
     }
 }

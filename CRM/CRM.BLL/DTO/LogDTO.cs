@@ -9,6 +9,7 @@ namespace CRM.BLL.DTO
         public int Id { get; set; }
         public string Action { get; set; }
         public string UserId { get; set; }
+        public int CompanyId { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }

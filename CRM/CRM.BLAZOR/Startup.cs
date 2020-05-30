@@ -81,8 +81,10 @@ namespace CRM.BLAZOR
             services.AddTransient(typeof(ILogService), typeof(LogService));
             services.AddTransient(typeof(ICsvService), typeof(CsvService));
             services.AddTransient(typeof(IRegionService), typeof(RegionService));
+            services.AddTransient(typeof(IContactService), typeof(ContactService));
             services.AddTransient(typeof(ILemlistIntegrationService), typeof(LemlistIntegrationService));
             services.AddTransient(typeof(IHunterIntegrationService), typeof(HunterIntegrationService));
+            services.AddTransient(typeof(ILinkedinService), typeof(LinkedinService));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
@@ -105,7 +107,8 @@ namespace CRM.BLAZOR
                 options.HttpsPort = 3333;
             });*/
             services.AddScoped(typeof(ITempService), typeof(TempService));
-            
+            services.AddSingleton(typeof(ISingleTemp), typeof(SingleTemp));
+
             //services.AddHttpClient<IAuthService, AuthService>();
             services.AddSignalR();
 
@@ -113,7 +116,7 @@ namespace CRM.BLAZOR
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

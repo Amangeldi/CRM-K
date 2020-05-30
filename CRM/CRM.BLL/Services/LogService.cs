@@ -21,11 +21,25 @@ namespace CRM.BLL.Services
         }
         public async Task<LogDTO> AddLog(LogDTO logDTO)
         {
-            Log log = new Log
+            Log log;
+            if (logDTO.CompanyId==0)
             {
-                Action = logDTO.Action,
-                UserId = logDTO.UserId
-            };
+                log = new Log
+                {
+                    Action = logDTO.Action,
+                    UserId = logDTO.UserId
+                };
+            }
+            else
+            {
+                log = new Log
+                {
+                    Action = logDTO.Action,
+                    UserId = logDTO.UserId,
+                    CompanyId = logDTO.CompanyId
+                };
+            }
+            
             await db.Logs.AddAsync(log);
             await db.SaveChangesAsync();
             return logDTO;

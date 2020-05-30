@@ -23,5 +23,6 @@ namespace CRM.DAL.Entities
         public Linkedin CompanyLinkedin { get; set; }
 
         public virtual List<CompanyContactLink> CompanyContactLinks { get; set; }
+        public virtual List<Log> Logs { get; set; }
     }
 }

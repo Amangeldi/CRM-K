@@ -16,9 +16,11 @@ namespace CRM.BLL.Services
     public class LemlistIntegrationService : ILemlistIntegrationService
     {
         ITempService _tempService;
-        public LemlistIntegrationService(ITempService tempService)
+        ISingleTemp _singleTemp;
+        public LemlistIntegrationService(ITempService tempService, ISingleTemp singleTemp)
         {
             _tempService = tempService;
+            _singleTemp = singleTemp;
         }
         byte[] authenticationBytes = Encoding.ASCII.GetBytes(":5ae614888a4753f07b9833abad6f5b5d"); // <username>:<password>
         public async Task<IEnumerable<AddLeadInCampaignResult>> AddLeadsInCampaign(List<ContactDTO> contacts)
@@ -30,7 +32,7 @@ namespace CRM.BLL.Services
             foreach (var contact in contacts)
             {
                 //string myJson = "{'firstName':'"+contact.FirstName+ "','lastName':'" + contact.Surname + "','companyName':'test company'}";
-                CompanyContactLink companyContactLink = _tempService.CompanyContactLinks.Where(p => p.ContactId == contact.Id).FirstOrDefault();
+                CompanyContactLink companyContactLink = _singleTemp.CompanyContactLinks.Where(p => p.ContactId == contact.Id).FirstOrDefault();
 
                 string myJson = "{\"firstName\":\"" + contact.FirstName + "\",\"lastName\":\"" + contact.Surname + "\",\"companyName\":\""+companyContactLink.Company.CompanyLegalName+"\"}";
                 HttpContent httpContent =new StringContent(myJson, Encoding.UTF8, "application/json");

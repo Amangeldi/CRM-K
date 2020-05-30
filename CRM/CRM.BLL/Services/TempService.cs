@@ -22,10 +22,11 @@ namespace CRM.BLL.Services
         IUserRegistrationService userRegistrationServ;
         IServiceScopeFactory _ServiceScopeFactory;
         IRegionService regionServ;
+        ISingleTemp _singleTemp;
         public TempService(IMailFindService mailFindService, ICompanyService companyService,
             ILogService logService, ApiContext context, IUserRegistrationService userRegistrationService,
             ICountryService countryService, IServiceScopeFactory ServiceScopeFactory,
-            IRegionService regionService)
+            IRegionService regionService, ISingleTemp singleTemp)
         {
             mailFindServ = mailFindService;
             companyServ = companyService;
@@ -35,8 +36,9 @@ namespace CRM.BLL.Services
             userRegistrationServ = userRegistrationService;
             _ServiceScopeFactory = ServiceScopeFactory;
             regionServ = regionService;
+            _singleTemp = singleTemp;
         }
-        public GetUserDTO CurrentUser { get; set; }
+        /*public GetUserDTO CurrentUser { get; set; }
         public IEnumerable<CompanyDTO> AllCompanies { get; set; }
         public IEnumerable<ContactDTO> Contacts { get; set; }
         public IEnumerable<CompanyContactLink> CompanyContactLinks { get; set; }
@@ -48,10 +50,12 @@ namespace CRM.BLL.Services
         public IEnumerable<CompanyModel> CompanyModels { get; set; }
         public IEnumerable<CountryDTO> Countries { get; set; }
         public IEnumerable<RegionDTO> Regions { get; set; }
+        public bool FirstInit { get; set; } = true;*/
         private int SelectedId { get; set; }
+        public GetUserDTO CurrentUser { get; set; }
         public async Task<IEnumerable<ContactDTO>> GetCompanyContacts(int CompanyId)
         {
-            IEnumerable<CompanyContactLink> _companyContactLinks = CompanyContactLinks.Where(p => p.CompanyId == CompanyId);
+            IEnumerable<CompanyContactLink> _companyContactLinks = _singleTemp.CompanyContactLinks.Where(p => p.CompanyId == CompanyId);
             List<ContactDTO> contacts = new List<ContactDTO>();
             foreach (var companyContact in _companyContactLinks)
             {
@@ -70,22 +74,20 @@ namespace CRM.BLL.Services
         {
             SelectedId = Id;
         }
-
+        
         public async Task UpdateAllTemp()
         {
             await UpdateCompanies();
             await UpdateNewCompanies();
             await UpdateQualifiedCompanies();
             await UpdateNotQualifiedCompanies();
+            await UpdateLinkedins();
             await UpdateCompanyContactLinks();
             await UpdateCountries();
             await UpdateContacts();
             await UpdateRegions();
             await UpdateCompanyModels();
-
-
             await UpdateLogs();
-            
         }
         public async Task UpdateLogs()
         {
@@ -93,44 +95,44 @@ namespace CRM.BLL.Services
             {
                 var LogService = scope.ServiceProvider.GetService<ILogService>();
                 //var _tempService = scope.ServiceProvider.GetService<ITempService>();
-                Logs = await LogService.GetLogs();
+                _singleTemp.Logs = await LogService.GetLogs();
             }
         }
         public async Task UpdateCompanies()
         {
-            AllCompanies = await companyServ.GetCompanies();
+            _singleTemp.AllCompanies = await companyServ.GetCompanies();
         }
         public async Task UpdateNewCompanies()
         {
-           NewCompanies = await companyServ.GetNewCompanies();
+            _singleTemp.NewCompanies = await companyServ.GetNewCompanies();
         }
         public async Task UpdateQualifiedCompanies()
         {
-            QualifiedCompanies = await companyServ.GetQualifiedCompanies();
+            _singleTemp.QualifiedCompanies = await companyServ.GetQualifiedCompanies();
         }
         public async Task UpdateNotQualifiedCompanies()
         {
-            NotQualifiedCompanies = await companyServ.GetNotQualifiedCompanies();
+            _singleTemp.NotQualifiedCompanies = await companyServ.GetNotQualifiedCompanies();
         }
         public async Task UpdateLinkedins()
         {
-            Linkedins = await db.Linkedins.ToListAsync();
+            _singleTemp.Linkedins = await db.Linkedins.ToListAsync();
         }
         public async Task UpdateCompanyContactLinks()
         {
-            CompanyContactLinks = await mailFindServ.GetCompanyContactLinks();
+            _singleTemp.CompanyContactLinks = await mailFindServ.GetCompanyContactLinks();
         }
         public async Task UpdateCountries()
         {
-            Countries = await countryServ.GetCountries();
+            _singleTemp.Countries = await countryServ.GetCountries();
         }
         public async Task UpdateContacts()
         {
-            Contacts = await mailFindServ.GetAllContacts();
+            _singleTemp.Contacts = await mailFindServ.GetAllContacts();
         }
         public async Task UpdateRegions()
         {
-            Regions = await regionServ.GetRegions();
+            _singleTemp.Regions = await regionServ.GetRegions();
         }
         public async Task UpdateCompanyModels()
         {
@@ -167,7 +169,7 @@ namespace CRM.BLL.Services
                 }
             }
             );
-            CompanyModels = companies;
+            _singleTemp.CompanyModels = companies;
             /*IEnumerable<CompanyDTO> companies = await companyServ.GetCompanies();
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<CompanyDTO, CompanyModel>()
             .ForMember(p=>p.HGBasedInCountryName, p=>p.MapFrom(s=>countryServ.GetCountry(s.HGBasedInCountryId).Result.Name))

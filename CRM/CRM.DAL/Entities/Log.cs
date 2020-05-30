@@ -10,6 +10,8 @@ namespace CRM.DAL.Entities
         public string Action { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
+        public int? CompanyId { get; set; }
+        public Company Company { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

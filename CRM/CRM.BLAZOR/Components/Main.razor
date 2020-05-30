@@ -9,8 +9,11 @@
 <div class="main">
     <header>
         <div>
-            <button @onclick="async _ => await OpenModalForAddRegion()">Добавить Регион</button>
-            <button @onclick="async _ => await OpenModalForAddCountry()">Добавить Страну</button>
+            @if (user != null && user.Identity.IsAuthenticated && TempService.CurrentUser != null)
+            {
+                <button @onclick="async _ => await OpenModalForAddRegion()">Добавить Регион</button>
+                <button @onclick="async _ => await OpenModalForAddCountry()">Добавить Страну</button>
+            }
         </div>
     </header>
     <div class="grid-container">
@@ -206,15 +209,27 @@
                         {
                             @if (SelectedId != 0)
                             {
-                                <button @onclick="FindHunter">Найти контакты для @SelectedCompany.TradingName</button>
-
+                                <div class="controls bg-black">
+                                    <div class="flex-center">
+                                        <button @onclick="async _ => await FindHunter()">Найти контакты для @SelectedCompany.TradingName</button>
+                                    </div>
+                                    <div class="flex-center">
+                                        <button @onclick="async _ => await OpenModalForNewContact()">Добавить новый контакт @SelectedCompany.TradingName</button>
+                                    </div>
+                                </div>
 
                                 @if (checkedContacts.Count != 0)
                                 {
-                                    <button @onclick="Send">Отправить в lemmlist @checkedContacts.Count адресов </button>
-                                    <button @onclick="async _=> await ClearCheckedContacts()">Clear</button>
+                                    <div class="controls bg-black">
+                                        <div class="flex-center">
+                                            <button @onclick="Send">Отправить в lemmlist @checkedContacts.Count адресов </button>
+                                        </div>
+                                        <div class="flex-center">
+                                            <button @onclick="async _=> await ClearCheckedContacts()">Clear</button>
+                                        </div>
+                                    </div>
                                 }
-                                @if (contacts != null)
+                                @if (SelectedCompanyContacts != null)
                                 {
                                     <table>
                                         <thead>
@@ -231,7 +246,7 @@
                                                     Должность
                                                 </th>
                                                 <th>
-                                                    Email
+                                                    SelectedCompanyContacts                 Email
                                                 </th>
                                                 <th>
                                                     Имя
@@ -248,7 +263,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach (var contact in contacts)
+                                            @foreach (var contact in SelectedCompanyContacts)
                                             {
                                                 <tr>
                                                     <td>
@@ -552,6 +567,61 @@
                     }
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div class="modal bg-black" style="display:@NewContactModalDisplay">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" @onclick="Close">&times;</span>
+            <label class="red" style="display:@ExceptionLabelDisplay">@ExceptionLabel</label>
+            @if (SelectedCompany != null)
+            {
+                <label>Добавить новый контакт @SelectedCompany.CompanyLegalName </label>
+            }
+            <table>
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            Email
+                        </td>
+                        <td colspan="2">
+                            <input type="text" @bind="NewContact.Email">
+                        </td>
+                        <td colspan="2">
+                            Должность
+                        </td>
+                        <td colspan="2">
+                            <input type="text" @bind="NewContact.Position">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            Имя
+                        </td>
+                        <td colspan="2">
+                            <input type="text" @bind="NewContact.FirstName">
+                        </td>
+                        <td colspan="2">
+                            Фамилия
+                        </td>
+                        <td colspan="2">
+                            <input type="text" @bind="NewContact.Surname">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            Linkedin
+                        </td>
+                        <td colspan="5">
+                            <input class="linkedin-input" type="text" @bind="NewContact.LinkedinLink">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button @onclick="async _=>await AddNewContact()">Добавить</button>
+            <button @onclick="Close">Cancel</button>
         </div>
     </div>
 }

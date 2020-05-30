@@ -18,16 +18,18 @@ namespace CRM.BLL.Services
         public const string API_SECRET_KEY = "63f602242cad091f3e415c03408f309c450ffd4d";
         ApiContext db;
         ITempService _tempService;
-        public HunterIntegrationService(ApiContext context, ITempService tempService)
+        ISingleTemp _singleTemp;
+        public HunterIntegrationService(ApiContext context, ITempService tempService, ISingleTemp singleTemp)
         {
             db = context;
             _tempService = tempService;
+            _singleTemp = singleTemp;
         }
         public async Task<IEnumerable<Contact>> FindDomainContacts(string DomainName)
         {
             Company company = await db.Companies.FindAsync(_tempService.GetSelectedId());
             List<Contact> contacts = new List<Contact>();
-            List<ContactDTO> AllContacts = _tempService.Contacts.ToList();
+            List<ContactDTO> AllContacts = _singleTemp.Contacts.ToList();
             using HttpClient Http = new HttpClient();
             var response = await Http.GetAsync("https://api.hunter.io/v2/domain-search?domain="+ DomainName + "&api_key="+API_SECRET_KEY);
             HunterResponseDTO FoundContacts = new HunterResponseDTO();
@@ -63,7 +65,6 @@ namespace CRM.BLL.Services
                             Contact = newContact
                         };
                         await db.CompanyContactLinks.AddAsync(companyContactLink);
-                        await db.SaveChangesAsync();
                         contacts.Add(newContact);
                     }
                 }
@@ -85,11 +86,11 @@ namespace CRM.BLL.Services
                             Contact = newContact
                         };
                         await db.CompanyContactLinks.AddAsync(companyContactLink);
-                        await db.SaveChangesAsync();
                         contacts.Add(newContact);
                     }
                 }
             }
+            await db.SaveChangesAsync();
             return contacts;
         }
     }
