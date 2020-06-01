@@ -10,5 +10,6 @@ namespace CRM.BLAZOR.Services
     {
         Task<LoginResult> Login(LoginModel loginModel);
         Task Logout();
+        Uri GetAbsoluteUri();
     }
 }

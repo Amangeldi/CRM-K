@@ -18,10 +18,12 @@ namespace CRM.BLL.Services
     {
         const string CSV_PATH = "wwwroot/files/file.csv";
         readonly ICompanyService _companyService;
+        ISingleTemp _singleTemp;
         readonly ApiContext db;
-        public CsvService(ICompanyService companyService, ApiContext context)
+        public CsvService(ICompanyService companyService, ApiContext context, ISingleTemp singleTemp)
         {
             _companyService = companyService;
+            _singleTemp = singleTemp;
             db = context;
         }
         public async Task ExportCSV(IEnumerable<CompanyDTO> companies)
@@ -55,13 +57,23 @@ namespace CRM.BLL.Services
                 {
                     region = regions.First();
                 }
-                Country country = await db.Countries.Where(p => p.RegionId == region.Id&&p.Name==company.HGBasedInCountry).FirstOrDefaultAsync();
-                if(country==null)
+                CountryDTO countryDTO = _singleTemp.Countries.Where(p => p.RegionId == region.Id&&p.Name==company.HGBasedInCountry).FirstOrDefault();
+                Country country;
+                if (countryDTO == null)
                 {
-                    country = new Country { Name = company.HGBasedInCountry, RegionId = region.Id };
+                    country = new Country { Name = company.HGBasedInCountry, RegionId = region.Id};
                     await db.Countries.AddAsync(country);
                 }
-
+                else
+                {
+                    country = new Country
+                    {
+                        Id = countryDTO.Id,
+                        Capital = countryDTO.Capital,
+                        Name = countryDTO.Name,
+                        RegionId = countryDTO.RegionId
+                    };
+                }
                 CompanyRegistrationDTO newCompany = new CompanyRegistrationDTO
                 {
                     CompanyLegalName = company.CompanyLegalName,

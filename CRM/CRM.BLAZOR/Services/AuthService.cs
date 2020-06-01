@@ -42,7 +42,7 @@ namespace CRM.BLAZOR.Services
             _userManager = userManager;
             _logService = logService;
         }
-        private static Uri GetAbsoluteUri()
+        public Uri GetAbsoluteUri()
         {
             var request = _httpContextAccessor.HttpContext.Request;
             UriBuilder uriBuilder = new UriBuilder

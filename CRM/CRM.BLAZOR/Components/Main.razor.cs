@@ -73,8 +73,10 @@ namespace CRM.BLAZOR.Components
         protected AuthenticationState authState;
         protected ClaimsPrincipal user;
         public CompanyModel SelectedCompany;
-        protected int SelectedId;
 
+        protected int SelectedId;
+        public string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        public string darkStyle;
         protected string login;
         protected string password;
         protected string LeftStyle { get; set; } = @"'title-new-companies' 'content' 'content' 'content' 'content' 'content' 'content' 'content' 'content' 'content'
@@ -128,6 +130,8 @@ namespace CRM.BLAZOR.Components
         #region BASE_METHODS
         protected override async Task OnInitializedAsync()
         {
+            
+            darkStyle = AuthService.GetAbsoluteUri() + "/css/style.css";
             NewCompany = new CompanyRegistrationDTO();
             AddLemlistStatistic = new AddLemlistStatistic();
             checkedContacts = new List<int>();
@@ -616,6 +620,8 @@ namespace CRM.BLAZOR.Components
                 }
                 MessageForLoading = "Парсим файл, ожидайте, это может продолжатся несколько минут";
                 await CsvService.ImportCSV();
+                await TempService.UpdateCountries();
+                await TempService.UpdateCompanies();
                 isLoading = false;
                 UploadStatus = $"Finished loading {file.Size} bytes from {file.Name}";
             }
