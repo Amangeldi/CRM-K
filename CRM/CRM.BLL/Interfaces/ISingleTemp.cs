@@ -20,5 +20,6 @@ namespace CRM.BLL.Interfaces
         IEnumerable<LogDTO> Logs { get; set; }
         IEnumerable<RegionDTO> Regions { get; set; }
         bool FirstInit { get; set; }
+        string AbsoluteUri { get; set; }
     }
 }

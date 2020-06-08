@@ -62,6 +62,7 @@ namespace CRM.BLL.Services
                 company = new Company
                 {
                     CompanyLegalName = CompanyRegistrationDTO.CompanyLegalName,
+                    NormalizeCompanyLegalName = CompanyRegistrationDTO.CompanyLegalName.ToLower(),
                     HGBasedInCountryId = CompanyRegistrationDTO.HGBasedInCountryId,
                     Qualification = NewCompany,
                     TradingName = CompanyRegistrationDTO.TradingName,
@@ -71,7 +72,6 @@ namespace CRM.BLL.Services
             }
             else
             {
-
                 company = new Company
                 {
                     CompanyLegalName = CompanyRegistrationDTO.CompanyLegalName,
@@ -85,6 +85,7 @@ namespace CRM.BLL.Services
             await db.SaveChangesAsync();
             return CompanyRegistrationDTO;
         }
+        
 
         public async Task<bool> DeleteCompany(int CompanyId)
         {

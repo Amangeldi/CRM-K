@@ -19,11 +19,18 @@ namespace CRM.BLL.Services
         const string CSV_PATH = "wwwroot/files/file.csv";
         readonly ICompanyService _companyService;
         ISingleTemp _singleTemp;
+        ITempService _tempService;
+        IRegionService _regionService;
+        ICountryService _countryService;
         readonly ApiContext db;
-        public CsvService(ICompanyService companyService, ApiContext context, ISingleTemp singleTemp)
+        public CsvService(ICompanyService companyService, ApiContext context, ISingleTemp singleTemp,
+            ITempService tempService, IRegionService regionService, ICountryService countryService)
         {
             _companyService = companyService;
             _singleTemp = singleTemp;
+            _tempService = tempService;
+            _regionService = regionService;
+            _countryService = countryService;
             db = context;
         }
         public async Task ExportCSV(IEnumerable<CompanyDTO> companies)
@@ -44,35 +51,116 @@ namespace CRM.BLL.Services
                 // получаем строки
                 Companies = csvReader.GetRecords<CompanyCsvModel>().ToList();
             }
-            foreach (var company in Companies ?? Enumerable.Empty<CompanyCsvModel>())
+            CompanyQualification NewCompanyQualification = await db.CompanyQualifications.Where(p => p.QualificationName == "NewCompany").FirstAsync();
+            List<Region> oldRegions = await db.Regions.ToListAsync();
+            List<Country> oldCountries = await db.Countries.Include(p => p.Region).ToListAsync();
+            List<Company> oldCompanies = await db.Companies.ToListAsync();
+            List<Linkedin> oldLinkedins = await db.Linkedins.ToListAsync();
+            List<string> NewLagalNames = new List<string>();
+            foreach (var company in Companies)
             {
-                List<Region> regions = await db.Regions.Where(p => p.Name == company.RegionName).ToListAsync();
-                Region region;
-                if (regions.Count==0)
+                Region region = oldRegions.Where(p => p.Name == company.RegionName).FirstOrDefault();
+                if (region == null)
                 {
-                    region = new Region { Name = company.RegionName };
+                    region = new Region
+                    {
+                        Name = company.RegionName
+                    };
+                    oldRegions.Add(region);
                     await db.Regions.AddAsync(region);
                 }
-                else
-                {
-                    region = regions.First();
-                }
-                CountryDTO countryDTO = _singleTemp.Countries.Where(p => p.RegionId == region.Id&&p.Name==company.HGBasedInCountry).FirstOrDefault();
-                Country country;
-                if (countryDTO == null)
-                {
-                    country = new Country { Name = company.HGBasedInCountry, RegionId = region.Id};
-                    await db.Countries.AddAsync(country);
-                }
-                else
+
+                Country country = oldCountries.Where(p => p.Region == region && p.Name == company.HQBasedInCountry).FirstOrDefault();
+                if (country == null )
                 {
                     country = new Country
                     {
-                        Id = countryDTO.Id,
-                        Capital = countryDTO.Capital,
-                        Name = countryDTO.Name,
-                        RegionId = countryDTO.RegionId
+                        Name = company.HQBasedInCountry,
+                        Region = region
                     };
+                    oldCountries.Add(country);
+                    await db.Countries.AddAsync(country);
+                }
+                Linkedin linkedin = null;
+                if (company.CompanyLinkedinLink != null && FixLinkedinLink(company.CompanyLinkedinLink) != null)
+                {
+                    linkedin = oldLinkedins.Where(p => p.FullLink == FixLinkedinLink(company.CompanyLinkedinLink)).FirstOrDefault();
+                    if (linkedin == null)
+                    {
+                        linkedin = new Linkedin
+                        {
+                            FullLink = FixLinkedinLink(company.CompanyLinkedinLink)
+                        };
+                        await db.Linkedins.AddAsync(linkedin);
+                    }
+                }
+                Company NewCompany = oldCompanies.Where(p => p.NormalizeCompanyLegalName == company.CompanyLegalName.ToLower()).FirstOrDefault();
+                
+                if(company.CompanyLegalName== "Google")
+                {
+                    if(oldCompanies.Where(p => p.CompanyLegalName == "Google").FirstOrDefault()!=null)
+                    {
+
+                    }
+                }
+                if (NewCompany == null && !NewLagalNames.Contains(company.CompanyLegalName.ToLower()))
+                {
+                    NewLagalNames.Add(company.CompanyLegalName.ToLower());
+                    if (linkedin != null)
+                    {
+                        NewCompany = new Company
+                        {
+                            Qualification = NewCompanyQualification,
+                            CompanyLegalName = company.CompanyLegalName,
+                            NormalizeCompanyLegalName = company.CompanyLegalName.ToLower(),
+                            CompanyLinkedin = linkedin,
+                            HGBasedInCountry = country,
+                            TradingName = company.TradingName,
+                            Website = company.Website
+                        };
+                    }
+                    else
+                    {
+                        NewCompany = new Company
+                        {
+                            Qualification = NewCompanyQualification,
+                            CompanyLegalName = company.CompanyLegalName,
+                            NormalizeCompanyLegalName = company.CompanyLegalName.ToLower(),
+                            HGBasedInCountry = country,
+                            TradingName = company.TradingName,
+                            Website = company.Website
+                        };
+                    }
+                    await db.Companies.AddAsync(NewCompany);
+                }
+                else
+                {
+
+                }
+            }
+            await db.SaveChangesAsync();
+            #region
+            /*foreach (var company in Companies ?? Enumerable.Empty<CompanyCsvModel>())
+            {
+                List<Region> CompanyRegions = regions.Where(p => p.Name == company.RegionName).ToList();
+                Region region;
+                if (CompanyRegions.Count==0)
+                {
+                    region = await _regionService.CreateRegion(company.RegionName);
+                    await _tempService.UpdateRegions();
+                }
+                else
+                {
+                    region = CompanyRegions.First();
+                }
+                CountryDTO countryDTO = _singleTemp.Countries.Where(p => p.RegionId == region.Id&&p.Name==company.HGBasedInCountry).FirstOrDefault();
+                //Country country;
+                if (countryDTO == null)
+                {
+                    CountryDTO country = new CountryDTO { Name = company.HGBasedInCountry, RegionId = region.Id};
+                    await _countryService.CreateCountry(country);
+                    await _tempService.UpdateCountries();
+                    countryDTO = _singleTemp.Countries.Where(p => p.RegionId == region.Id && p.Name == company.HGBasedInCountry).FirstOrDefault();
                 }
                 CompanyRegistrationDTO newCompany = new CompanyRegistrationDTO
                 {
@@ -80,18 +168,32 @@ namespace CRM.BLL.Services
                     TradingName = company.TradingName,
                     Website = company.Website,
                     CompanyLinkedinLink = company.CompanyLinkedinLink,
-                    HGBasedInCountryId = country.Id
+                    HGBasedInCountryId = countryDTO.Id
                 };
-                try
-                {
-                    await _companyService.CreateCompany(newCompany);
-                }
-                catch(Exception ex)
-                {
-
-                }
+                NewCompanies.Add(newCompany);
             }
-            await db.SaveChangesAsync();
+            try
+            {
+                await _companyService.CreateRangeCompanies(NewCompanies);
+            }
+            catch (Exception ex)
+            {
+
+            }*/
+            #endregion
+            string FixLinkedinLink(string LinkedinLink)
+            {
+                if (LinkedinLink.Length > 12 && LinkedinLink.Substring(0, 12) == "https://www.")
+                {
+                    LinkedinLink = LinkedinLink.Substring(12);
+                }
+                if (LinkedinLink.Length > 12 && LinkedinLink.Substring(0, 12) == "linkedin.com")
+                {
+                    return LinkedinLink;
+                }
+                return null;
+            }
         }
+
     }
 }

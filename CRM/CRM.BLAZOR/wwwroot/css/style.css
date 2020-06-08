@@ -20,7 +20,7 @@ div {
 }
 
 a {
-    color: darkgreen;
+    color: white;
     text-decoration: none;
 }
 
@@ -207,7 +207,7 @@ footer {
     vertical-align: baseline;
     margin: 3px 0;
     font-weight: bold;
-    color: #711a1a;
+    color: white;
     margin-right: 7px;
     word-break: break-word;
 }
@@ -300,7 +300,26 @@ th, td {
 .red {
     color: red;
 }
+.pagination-element {
+    border: none;
+    border-bottom: 1px solid black;
+    padding-bottom: 3px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 1px 1px;
+    grid-template-areas: "prev current current current next";
+}
+.prev {
+    grid-area: prev;
+}
 
+.current {
+    grid-area: current;
+}
+
+.next {
+    grid-area: next;
+}
 .company-element {
     border: none;
     border-bottom: 1px solid black;

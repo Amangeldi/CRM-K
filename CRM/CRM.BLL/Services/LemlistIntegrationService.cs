@@ -22,7 +22,8 @@ namespace CRM.BLL.Services
             _tempService = tempService;
             _singleTemp = singleTemp;
         }
-        byte[] authenticationBytes = Encoding.ASCII.GetBytes(":5ae614888a4753f07b9833abad6f5b5d"); // <username>:<password>
+        //byte[] authenticationBytes = Encoding.ASCII.GetBytes(":5ae614888a4753f07b9833abad6f5b5d"); // <username>:<password>
+        byte[] authenticationBytes = Encoding.ASCII.GetBytes(":30643e04a6c442702adaed7d6d921aa5");
         public async Task<IEnumerable<AddLeadInCampaignResult>> AddLeadsInCampaign(List<ContactDTO> contacts)
         {
             AdvertisingCompany advertisingCompany = (await GetAdvertisingCompanies()).FirstOrDefault();

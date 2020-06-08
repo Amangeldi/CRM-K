@@ -39,5 +39,6 @@ namespace CRM.BLL.Interfaces
         int GetSelectedId();
         Task UpdateAllTemp();
         Task<IEnumerable<ContactDTO>> GetCompanyContacts(int CompanyId);
+        IEnumerable<CompanyDTO> GetPage(IEnumerable<CompanyDTO> list, int page, int pageSize);
     }
 }

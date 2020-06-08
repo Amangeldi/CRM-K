@@ -30,7 +30,7 @@ namespace CRM.DAL.EF
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Company>()
-                .HasIndex(p => p.CompanyLegalName).IsUnique();
+                .HasIndex(p => p.NormalizeCompanyLegalName).IsUnique();
             /*modelBuilder.Entity<Company>()
                 .HasIndex(p => p.TradingName).IsUnique();
             modelBuilder.Entity<Company>()

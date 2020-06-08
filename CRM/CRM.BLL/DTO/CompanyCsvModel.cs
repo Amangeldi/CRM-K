@@ -15,7 +15,7 @@ namespace CRM.BLL.DTO
         [Name("Region")]
         public string RegionName { get; set; }
         [Name("HQ based in country")]
-        public string HGBasedInCountry { get; set; }
+        public string HQBasedInCountry { get; set; }
         [Name("Valid website link OR leave blank")]
         public string Website { get; set; }
         [Name("Generic email")]

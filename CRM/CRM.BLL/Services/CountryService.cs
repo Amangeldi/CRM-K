@@ -30,6 +30,8 @@ namespace CRM.BLL.Services
             };
             await db.Countries.AddAsync(country);
             await db.SaveChangesAsync();
+            CountryRegistrationDTO.Id = country.Id;
+
             return CountryRegistrationDTO;
         }
 
@@ -71,7 +73,10 @@ namespace CRM.BLL.Services
             {
 
                 Country country = await db.Countries.FindAsync(CountryId);
-
+                if (country==null)
+                {
+                    return null;
+                }
                 CountryDTO countryDTO = new CountryDTO
                 {
                     Capital = country.Capital,

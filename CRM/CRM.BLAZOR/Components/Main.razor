@@ -38,6 +38,11 @@
                             </div>
                         </div>
                         <div class="content content-new-companies" style="display:@NewCompanyDisplay">
+                            <div class="pagination-element">
+                                <div class="prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevNewCompaniesPage()"> &lt; </div>
+                                <div class="current"> @CurrentNewCompaniesPage </div>
+                                <div class="next" @onclick:stopPropagation="true" @onclick="async _=> await NextNewCompaniesPage()"> &gt; </div>
+                            </div>
                             @foreach (var company in NewCompanies ?? Enumerable.Empty<CompanyDTO>())
                             {
                                 if (company.Id != SelectedId)
@@ -58,6 +63,11 @@
                             Квалифицированные
                         </div>
                         <div class="content content-qualified" style="display:@QualifiedDisplay">
+                            <div class="pagination-element">
+                                <div class="prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevQualifiedCompaniesPage()"> &lt; </div>
+                                <div class="current"> @CurrentQualifiedCompaniesPage </div>
+                                <div class="next" @onclick:stopPropagation="true" @onclick="async _=> await NextQualifiedCompaniesPage()"> &gt; </div>
+                            </div>
                             @foreach (var company in QualifiedCompanies ?? Enumerable.Empty<CompanyDTO>())
                             {
                                 if (company.Id != SelectedId)
@@ -78,6 +88,11 @@
                             Не квалифицированные
                         </div>
                         <div class="content content-not-qualified" style="display:@NotQualifiedDisplay">
+                            <div class="pagination-element">
+                                <div class="prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevNotQualifiedCompaniesPage()"> &lt; </div>
+                                <div class="current"> @CurrentNotQualifiedCompaniesPage </div>
+                                <div class="next" @onclick:stopPropagation="true" @onclick="async _=> await NextNotQualifiedCompaniesPage()"> &gt; </div>
+                            </div>
                             @foreach (var company in NotQualifiedCompanies ?? Enumerable.Empty<CompanyDTO>())
                             {
                                 if (company.Id != SelectedId)
@@ -363,7 +378,7 @@
             </ContentTemplate>
             <LoadingTemplate>
                 <!-- The Modal -->
-                <div class="modal bg-black" style="display:block">
+                <div class="modal bg-black" style="@LoaderDisplay">
                     <!-- Modal content -->
                     <div class="modal-content">
                         <p>@MessageForLoading</p>

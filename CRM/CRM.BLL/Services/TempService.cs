@@ -74,7 +74,7 @@ namespace CRM.BLL.Services
         {
             SelectedId = Id;
         }
-        
+
         public async Task UpdateAllTemp()
         {
             await UpdateCompanies();
@@ -177,6 +177,11 @@ namespace CRM.BLL.Services
             .ForMember(p => p.QualificationName, p => p.MapFrom(s => qualificationServ.GetQualifications().Result.Where(p=>p.Id==s.QualificationId).FirstOrDefault().QualificationName))
             ).CreateMapper();
             companyModels  = mapper.Map<IEnumerable<CompanyDTO>, IEnumerable<CompanyModel>>(companies);*/
+        }
+        public IEnumerable<CompanyDTO> GetPage(IEnumerable<CompanyDTO> list, int page, int pageSize)
+        {
+            int PagesCount = list.Count() / pageSize;
+            return list.Skip((page-1) * pageSize).Take(pageSize).ToList();
         }
     }
 }

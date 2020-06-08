@@ -33,6 +33,7 @@ namespace CRM.BLAZOR.Components
 {
     public class MainBase : ComponentBase, IDisposable
     {
+        public const int PAGE_SIZE = 30;
         #region INJECTS
         [Inject]
         protected CRM.BLL.Interfaces.IUserRegistrationService UserRegistrationService { get; set; }
@@ -104,6 +105,7 @@ namespace CRM.BLAZOR.Components
         public string AddRegionModalDisplay = "none";
         public string NewContactModalDisplay = "none";
         public string MessageModalDisplay = "none";
+        public string LoaderDisplay = "none";
         public string MessageForModal = "";
         public string MessageForLoading = "";
         public string MessageForHeader = "";
@@ -124,24 +126,34 @@ namespace CRM.BLAZOR.Components
         /// logs div BEGIN
         public IEnumerable<LogDTO> logs;
         public GetUserDTO currentUser;
+        public int CurrentNewCompaniesPage = 1;
+        public int CurrentQualifiedCompaniesPage = 1;
+        public int CurrentNotQualifiedCompaniesPage = 1;
         /// controls END
         /// logs div END
         #endregion
         #region BASE_METHODS
         protected override async Task OnInitializedAsync()
         {
-            
-            darkStyle = AuthService.GetAbsoluteUri() + "/css/style.css";
+            if(SingleTemp.AbsoluteUri==null)
+            {
+                darkStyle = AuthService.GetAbsoluteUri() + "/css/style.css";
+                SingleTemp.AbsoluteUri = AuthService.GetAbsoluteUri().ToString();
+            }
+            else
+            {
+                darkStyle = SingleTemp.AbsoluteUri + "/css/style.css";
+            }
             NewCompany = new CompanyRegistrationDTO();
             AddLemlistStatistic = new AddLemlistStatistic();
             checkedContacts = new List<int>();
+            LoaderDisplay = "block";
             MessageForLoading = "Проверка прав доступа, ожидайте";
             isLoading = true;
             authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             user = authState.User;
             if (user.Identity.IsAuthenticated)
             {
-                Thread.Sleep(4300);
                 TempService.CurrentUser = await UserRegistrationService.GetCurrent(user.Identity.Name);
                 if(SingleTemp.FirstInit != false)
                 {
@@ -151,8 +163,11 @@ namespace CRM.BLAZOR.Components
                 await RenderUpdate();
             }
             isLoading = false;
+            await Close();
+            await InvokeAsync(StateHasChanged);
             //await StartCountdown();
         }
+
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -179,9 +194,9 @@ namespace CRM.BLAZOR.Components
 
         public async Task RenderUpdate()
         {
-            NewCompanies = SingleTemp.NewCompanies;
-            QualifiedCompanies = SingleTemp.QualifiedCompanies;
-            NotQualifiedCompanies = SingleTemp.NotQualifiedCompanies;
+            NewCompanies = TempService.GetPage(SingleTemp.NewCompanies, CurrentNewCompaniesPage, PAGE_SIZE);
+            QualifiedCompanies = TempService.GetPage(SingleTemp.QualifiedCompanies, CurrentQualifiedCompaniesPage, PAGE_SIZE);
+            NotQualifiedCompanies = TempService.GetPage(SingleTemp.NotQualifiedCompanies, CurrentNotQualifiedCompaniesPage, PAGE_SIZE);
             countries = SingleTemp.Countries;
             regions = SingleTemp.Regions;
             SelectedId = TempService.GetSelectedId();
@@ -211,6 +226,7 @@ namespace CRM.BLAZOR.Components
         public async Task Login()
         {
             MessageForLoading = "Проверка прав доступа, ожидайте";
+            LoaderDisplay = "block";
             isLoading = true;
             LoginModel loginModel = new LoginModel
             {
@@ -224,18 +240,23 @@ namespace CRM.BLAZOR.Components
                 //await TempService.UpdateAllTemp();
             }
             //NavigationManager.NavigateTo("/");
+            Dispose();
             await OnInitializedAsync();
             isLoading = false;
+            await Close();
         }
         public async Task Logout()
         {
             MessageForLoading = "Проверка прав доступа, ожидайте";
+            LoaderDisplay = "block";
             isLoading = true;
             await AuthService.Logout();
             TempService.SetId(0);
             //NavigationManager.NavigateTo("/");
+            Dispose();
             await OnInitializedAsync();
             isLoading = false;
+            await Close();
         }
         public async Task SelectCompanyElement(int id)
         {
@@ -249,7 +270,57 @@ namespace CRM.BLAZOR.Components
             isFooterLoading = false;
             //Dispose();
         }
-
+        public async Task PrevNewCompaniesPage()
+        {
+            if(CurrentNewCompaniesPage>1)
+            {
+                CurrentNewCompaniesPage--;
+                RenderUpdate();
+            }
+        }
+        public async Task NextNewCompaniesPage()
+        {
+            int allPagesCount = SingleTemp.NewCompanies.Count() / PAGE_SIZE;
+            if(CurrentNewCompaniesPage< allPagesCount)
+            {
+                CurrentNewCompaniesPage++;
+                RenderUpdate();
+            }
+        }
+        public async Task PrevQualifiedCompaniesPage()
+        {
+            if (CurrentQualifiedCompaniesPage > 1)
+            {
+                CurrentQualifiedCompaniesPage--;
+                RenderUpdate();
+            }
+        }
+        public async Task NextQualifiedCompaniesPage()
+        {
+            int allPagesCount = SingleTemp.QualifiedCompanies.Count() / PAGE_SIZE;
+            if (CurrentQualifiedCompaniesPage < allPagesCount)
+            {
+                CurrentQualifiedCompaniesPage++;
+                RenderUpdate();
+            }
+        }
+        public async Task PrevNotQualifiedCompaniesPage()
+        {
+            if (CurrentNotQualifiedCompaniesPage > 1)
+            {
+                CurrentNotQualifiedCompaniesPage--;
+                RenderUpdate();
+            }
+        }
+        public async Task NextNotQualifiedCompaniesPage()
+        {
+            int allPagesCount = SingleTemp.NotQualifiedCompanies.Count() / PAGE_SIZE;
+            if (CurrentNotQualifiedCompaniesPage < allPagesCount)
+            {
+                CurrentNotQualifiedCompaniesPage++;
+                RenderUpdate();
+            }
+        }
         public async Task AddLog(int CompanyId = 0, string WebSite = null, string LinkedinOfTradingName = null,
             QualifyCompanyModel qualifyCompany = null, int count = 0, string LinkedinOfUser = null, string ActionMesage = null)
         {
@@ -338,7 +409,6 @@ namespace CRM.BLAZOR.Components
             using (var scope = ServiceScopeFactory.CreateScope())
             {
                 var _logService = scope.ServiceProvider.GetService<ILogService>();
-                //var _tempService = scope.ServiceProvider.GetService<ITempService>();
                 await _logService.AddLog(logDTO);
                 await TempService.UpdateLogs();
             }
@@ -407,6 +477,7 @@ namespace CRM.BLAZOR.Components
                 {
                     Validator.ValidateObject(NewCompany, new ValidationContext(NewCompany));
                     MessageForLoading = "Добавляем компанию " + NewCompany.CompanyLegalName;
+                    LoaderDisplay = "block";
                     isLoading = true;
                     if (NewCompany.Website!=null)
                     {
@@ -455,6 +526,7 @@ namespace CRM.BLAZOR.Components
         public async Task SendLemlist()
         {
             MessageForLoading = "Отправляем в Lemlist " + SendForContacts.Count() + " контактов";
+            LoaderDisplay = "block";
             isLoading = true;
             var results = (await LemlistIntegrationService.AddLeadsInCampaign(SendForContacts.ToList())).ToList();
             int successResults = results.Where(p => p.Result == true).Count();
@@ -481,6 +553,7 @@ namespace CRM.BLAZOR.Components
             if (SelectedCompany != null && SelectedCompany.Website != null)
             {
                 MessageForLoading = "Поиск контактов " + SelectedCompany.CompanyLegalName + ", ожидайте";
+                LoaderDisplay = "block";
                 isLoading = true;
                 List<Contact> FoundContacts = (await HunterIntegrationService.FindDomainContacts(SelectedCompany.Website)).ToList();
                 MessageForModal = "Найдены " + FoundContacts.Count + " новых контактов";
@@ -497,6 +570,7 @@ namespace CRM.BLAZOR.Components
             }
             await RenderUpdate();
             isLoading = false;
+            await Close();
         }
         
         public async Task AddRegion()
@@ -504,6 +578,7 @@ namespace CRM.BLAZOR.Components
             if(NewRegionName!=null)
             {
                 MessageForLoading = "Добавляем новый регион " + NewRegionName;
+                LoaderDisplay = "block";
                 isLoading = true;
                 await RegionService.CreateRegion(NewRegionName); 
                 await TempService.UpdateRegions();
@@ -517,6 +592,7 @@ namespace CRM.BLAZOR.Components
             if(NewContact != null)
             {
                 MessageForLoading = "Добавляем новую контакт " + SelectedCompany.CompanyLegalName;
+                LoaderDisplay = "block";
                 isLoading = true;
                 NewContact.CompanyId = TempService.GetSelectedId();
                 await ContactService.AddCompanyContact(NewContact);
@@ -534,6 +610,7 @@ namespace CRM.BLAZOR.Components
                 try
                 {
                     MessageForLoading = "Добавляем новую страну " + NewCountry.Name;
+                    LoaderDisplay = "block";
                     isLoading = true;
                     await CountryService.CreateCountry(NewCountry);
                     await TempService.UpdateCountries();
@@ -543,6 +620,7 @@ namespace CRM.BLAZOR.Components
                 }
                 catch (Exception ex)
                 {
+                    LoaderDisplay = "block";
                     isLoading = false;
                     ExceptionLabel = ex.Message;
                     ExceptionLabelDisplay = "block";
@@ -598,6 +676,7 @@ namespace CRM.BLAZOR.Components
             AddLemlistStatisticModalDisplay = "none"; 
             AddRegionModalDisplay = "none";
             MessageModalDisplay = "none";
+            LoaderDisplay = "none";
             await RenderUpdate();
             await InvokeAsync(StateHasChanged);
         }
@@ -612,6 +691,7 @@ namespace CRM.BLAZOR.Components
                 /*var ms = new MemoryStream();
                 await file.Data.CopyToAsync(ms);*/
                 MessageForLoading = "Загружаем файл";
+                LoaderDisplay = "block";
                 isLoading = true;
                 ImportContactsModalDisplay = "none";
                 using (FileStream DestinationStream = File.Create(EndDirectory + "file.csv"))
@@ -620,12 +700,15 @@ namespace CRM.BLAZOR.Components
                 }
                 MessageForLoading = "Парсим файл, ожидайте, это может продолжатся несколько минут";
                 await CsvService.ImportCSV();
-                await TempService.UpdateCountries();
-                await TempService.UpdateCompanies();
+                MessageForLoading = "Сохраняем новые данные";
+                await TempService.UpdateAllTemp();
                 isLoading = false;
+                await Close();
                 UploadStatus = $"Finished loading {file.Size} bytes from {file.Name}";
+                Dispose();
+                await OnInitializedAsync();
             }
-            await RenderUpdate();
+
         }
         /// prospect-finder div END
         #endregion

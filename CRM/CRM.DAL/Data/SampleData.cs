@@ -93,6 +93,7 @@ namespace CRM.DAL.Data
                 Company ACN = new Company
                 {
                     CompanyLegalName = "ATM ATM Pty Ltd",
+                    NormalizeCompanyLegalName = "atm atm pty ltd",
                     HGBasedInCountry = Australia,
                     Qualification = Qualified,
                     TradingName = "A.C.N.",
@@ -118,6 +119,7 @@ namespace CRM.DAL.Data
                 Company ATM = new Company
                 {
                     CompanyLegalName = "A.C.N. 605 479 678 Pty Ltd",
+                    NormalizeCompanyLegalName = "a.c.n. 605 479 678 pty ltd",
                     HGBasedInCountry = Australia,
                     Qualification = Qualified,
                     TradingName = "ATM",
@@ -145,6 +147,7 @@ namespace CRM.DAL.Data
                 Company Pay = new Company
                 {
                     CompanyLegalName = "24-pay s.r.o",
+                    NormalizeCompanyLegalName = "24-pay s.r.o",
                     HGBasedInCountry = Australia,
                     Qualification = NotQualified,
                     TradingName = "24 Pay SRO",
@@ -171,6 +174,7 @@ namespace CRM.DAL.Data
                 Company Ttz = new Company
                 {
                     CompanyLegalName = "HO ''Turkmen-Tranzit''",
+                    NormalizeCompanyLegalName = "ho ''turkmen-tranzit''",
                     HGBasedInCountry = TM,
                     Qualification = NewCompany,
                     TradingName = "Turkmen-Tranzit",
@@ -198,6 +202,7 @@ namespace CRM.DAL.Data
                 Company Ttw = new Company
                 {
                     CompanyLegalName = "HO ''Turkmen-Tranzit'' -> TTWeb",
+                    NormalizeCompanyLegalName = "ho ''turkmen-tranzit'' -> ttweb",
                     HGBasedInCountry = TM,
                     Qualification = Qualified,
                     TradingName = "TtWeb",
@@ -225,6 +230,7 @@ namespace CRM.DAL.Data
                 Company google = new Company
                 {
                     CompanyLegalName = "google",
+                    NormalizeCompanyLegalName = "google",
                     HGBasedInCountry = USA,
                     Qualification = Qualified,
                     TradingName = "google",
@@ -250,6 +256,7 @@ namespace CRM.DAL.Data
                 Company microsoft = new Company
                 {
                     CompanyLegalName = "microsoft",
+                    NormalizeCompanyLegalName = "microsoft",
                     HGBasedInCountry = USA,
                     Qualification = Qualified,
                     TradingName = "microsoft",
