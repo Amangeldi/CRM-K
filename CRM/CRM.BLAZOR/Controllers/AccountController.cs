@@ -38,7 +38,7 @@ namespace CRM.BLAZOR.Controllers
             return View();
         }
         [HttpPost("/Login")]
-        public async Task<IActionResult> Login([FromBody]LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             if (ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace CRM.BLAZOR.Controllers
             expires: expiry,
             signingCredentials: creds
         );
-                    
+
                     //_tempService.CurrentUser = await _userRegistrationService.GetCurrent(model.Email);
                     return Ok(new LoginResult { Successful = true, Token = new JwtSecurityTokenHandler().WriteToken(token) });
                 }
@@ -69,7 +69,7 @@ namespace CRM.BLAZOR.Controllers
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");
                 }
             }
-            return Ok(new LoginResult { Successful=false, Error="Авторизация не пройдена"});
+            return Ok(new LoginResult { Successful = false, Error = "Авторизация не пройдена" });
         }
         [HttpPost("/Logout")]
         public async Task<IActionResult> Logout()

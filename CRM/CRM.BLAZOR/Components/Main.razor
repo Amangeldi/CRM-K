@@ -12,8 +12,8 @@
         <div>
             @if (user != null && user.Identity.IsAuthenticated && TempService.CurrentUser != null)
             {
-                <button @onclick="async _ => await OpenModalForAddRegion()">Добавить Регион</button>
-                <button @onclick="async _ => await OpenModalForAddCountry()">Добавить Страну</button>
+                <button class="btn btn-warning" @onclick="async _ => await OpenModalForAddRegion()">Добавить Регион</button>
+                <button class="btn btn-warning" @onclick="async _ => await OpenModalForAddCountry()">Добавить Страну</button>
             }
         </div>
     </header>
@@ -21,28 +21,32 @@
         <SpinLoader IsLoading="@(isLoading)">
             <ContentTemplate>
                 <!-- LEFT div Begin -->
-                <div class="left bg-black" style="grid-template-areas:@LeftStyle">
+                <div class="left" style="grid-template-areas:@LeftStyle">
 
                     @if (user != null && user.Identity.IsAuthenticated && TempService.CurrentUser != null)
                     {
 
                         <div class="title title-new-companies" @onclick="OpenNewCompaniesDiv">
-                            <span class="titleName">
-                                Новые компании
-                            </span>
-                            <div @onclick="OpenModalForNewCompany" class="plus flex-center">
-                                +
-                            </div>
-                            <div @onclick="OpenModalForImportFile" class="upload flex-center">
-                                U
+                           
+                                <span class="titleName">
+                                    Новые компании
+                                </span>
+                                <div @onclick="OpenModalForNewCompany" class="plus flex-center">
+                                    +
+                                </div>
+                                <div @onclick="OpenModalForImportFile" class="upload flex-center">
+                                    U
+                                </div>
+                           
+                            <div class="grid-pagination pagination-element">
+                                <div class="flex-center prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevNewCompaniesPage()"> &lt; </div>
+                                <div class="flex-center current"> @CurrentNewCompaniesPage </div>
+                                <div class="flex-center pages-count">@NewCompaniesPagesCount</div>
+                                <div class="flex-center next" @onclick:stopPropagation="true" @onclick="async _=> await NextNewCompaniesPage()"> &gt; </div>
                             </div>
                         </div>
                         <div class="content content-new-companies" style="display:@NewCompanyDisplay">
-                            <div class="pagination-element">
-                                <div class="prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevNewCompaniesPage()"> &lt; </div>
-                                <div class="current"> @CurrentNewCompaniesPage </div>
-                                <div class="next" @onclick:stopPropagation="true" @onclick="async _=> await NextNewCompaniesPage()"> &gt; </div>
-                            </div>
+                            
                             @foreach (var company in NewCompanies ?? Enumerable.Empty<CompanyDTO>())
                             {
                                 if (company.Id != SelectedId)
@@ -60,14 +64,18 @@
                             }
                         </div>
                         <div class="title title-qualified" @onclick="OpenQualifiedDiv">
-                            Квалифицированные
+                            <span  class="titleName">
+                                Квалифицированные
+                            </span>
+                            <div class="pagination-element">
+                                <div class="flex-center prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevQualifiedCompaniesPage()"> &lt; </div>
+                                <div class="flex-center current"> @CurrentQualifiedCompaniesPage </div>
+                                <div class="flex-center pages-count">@QualifiedCompaniesPagesCount</div>
+                                <div class="flex-center next" @onclick:stopPropagation="true" @onclick="async _=> await NextQualifiedCompaniesPage()"> &gt; </div>
+                            </div>
                         </div>
                         <div class="content content-qualified" style="display:@QualifiedDisplay">
-                            <div class="pagination-element">
-                                <div class="prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevQualifiedCompaniesPage()"> &lt; </div>
-                                <div class="current"> @CurrentQualifiedCompaniesPage </div>
-                                <div class="next" @onclick:stopPropagation="true" @onclick="async _=> await NextQualifiedCompaniesPage()"> &gt; </div>
-                            </div>
+
                             @foreach (var company in QualifiedCompanies ?? Enumerable.Empty<CompanyDTO>())
                             {
                                 if (company.Id != SelectedId)
@@ -85,14 +93,18 @@
                             }
                         </div>
                         <div class="title title-not-qualified" @onclick="OpenNotQualifiedDiv">
-                            Не квалифицированные
+                            <span  class="titleName">
+                                Не квалифицированные
+                            </span>
+                            <div class="pagination-element">
+                                <div class="flex-center prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevNotQualifiedCompaniesPage()"> &lt; </div>
+                                <div class="flex-center current"> @CurrentNotQualifiedCompaniesPage </div>
+                                <div class="flex-center pages-count">@NotQualifiedCompaniesPagesCount</div>
+                                <div class="flex-center next" @onclick:stopPropagation="true" @onclick="async _=> await NextNotQualifiedCompaniesPage()"> &gt; </div>
+                            </div>
                         </div>
                         <div class="content content-not-qualified" style="display:@NotQualifiedDisplay">
-                            <div class="pagination-element">
-                                <div class="prev" @onclick:stopPropagation="true" @onclick="async _=> await PrevNotQualifiedCompaniesPage()"> &lt; </div>
-                                <div class="current"> @CurrentNotQualifiedCompaniesPage </div>
-                                <div class="next" @onclick:stopPropagation="true" @onclick="async _=> await NextNotQualifiedCompaniesPage()"> &gt; </div>
-                            </div>
+
                             @foreach (var company in NotQualifiedCompanies ?? Enumerable.Empty<CompanyDTO>())
                             {
                                 if (company.Id != SelectedId)
@@ -117,7 +129,7 @@
                 </div>
                 <!-- LEFT div End -->
                 <!-- CENTER div Begin -->
-                <div class="center bg-black">
+                <div class="center">
                     @if (user != null && user.Identity.IsAuthenticated && TempService.CurrentUser != null)
                     {
                         <div class="company-information">
@@ -198,50 +210,50 @@
                         </div>
                     }
                     <!-- CONTROLS div Begin -->
-                    <div class="controls bg-black">
+                    <div class="controls">
                         @if (user != null && user.Identity.IsAuthenticated && TempService.CurrentUser != null)
                         {
                             <div class="flex-center not-q-div">
-                                <button id="i1" @onclick="SetNotQualify" disabled="@IsDisabled">Квалификацию не прошёл</button>
+                                <button class="btn btn-warning" id="i1" @onclick="SetNotQualify" disabled="@IsDisabled">Квалификацию не прошёл</button>
                             </div>
                             <div class="flex-center q-div">
-                                <button @onclick="SetQualify" disabled="@IsDisabled">Квалифицировать как клиента</button>
+                                <button class="btn btn-warning" @onclick="SetQualify" disabled="@IsDisabled">Квалифицировать как клиента</button>
                             </div>
                         }
                         else
                         {
                             <div class="flex-center not-q-div">
-                                <button id="i1" @onclick="SetNotQualify" disabled="true">Квалификацию не прошёл</button>
+                                <button class="btn btn-warning" id="i1" @onclick="SetNotQualify" disabled="true">Квалификацию не прошёл</button>
                             </div>
                             <div class="flex-center q-div">
-                                <button @onclick="SetQualify" disabled="true">Квалифицировать как клиента</button>
+                                <button class="btn btn-warning" @onclick="SetQualify" disabled="true">Квалифицировать как клиента</button>
                             </div>
                         }
                     </div>
                     <!-- CONTROLS div END -->
                     <!-- PROSPECT-FINDER div Begin -->
-                    <div class="prospect-finder bg-black">
+                    <div class="prospect-finder">
                         @if (user != null && user.Identity.IsAuthenticated && TempService.CurrentUser != null)
                         {
                             @if (SelectedId != 0)
                             {
-                                <div class="controls bg-black">
+                                <div class="controls">
                                     <div class="flex-center">
-                                        <button @onclick="async _ => await FindHunter()">Найти контакты для @SelectedCompany.TradingName</button>
+                                        <button class="btn btn-warning" @onclick="async _ => await FindHunter()">Найти контакты для @SelectedCompany.TradingName</button>
                                     </div>
                                     <div class="flex-center">
-                                        <button @onclick="async _ => await OpenModalForNewContact()">Добавить новый контакт @SelectedCompany.TradingName</button>
+                                        <button class="btn btn-warning" @onclick="async _ => await OpenModalForNewContact()">Добавить новый контакт @SelectedCompany.TradingName</button>
                                     </div>
                                 </div>
 
                                 @if (checkedContacts.Count != 0)
                                 {
-                                    <div class="controls bg-black">
+                                    <div class="controls">
                                         <div class="flex-center">
-                                            <button @onclick="Send">Отправить в lemmlist @checkedContacts.Count адресов </button>
+                                            <button class="btn btn-warning" @onclick="Send">Отправить в lemmlist @checkedContacts.Count адресов </button>
                                         </div>
                                         <div class="flex-center">
-                                            <button @onclick="async _=> await ClearCheckedContacts()">Clear</button>
+                                            <button class="btn btn-warning" @onclick="async _=> await ClearCheckedContacts()">Clear</button>
                                         </div>
                                     </div>
                                 }
@@ -297,7 +309,7 @@
                                                     <td>
                                                         @contact.Surname
                                                     </td>
-                                                    <td>
+                                                    <td >
                                                         @if (contact.LinkedinId == 0)
                                                         {
                                                             <p>Отсутсвует</p>
@@ -305,7 +317,7 @@
                                                         else
                                                         {
                                                             Linkedin linkedin = Linkedins.Where(p => p.Id == contact.LinkedinId).FirstOrDefault();
-                                                            <a @onclick="async _=> await AddLog(LinkedinOfUser:linkedin.FullLink)" href="https://@linkedin.FullLink">Перейти</a>
+                                                            <a class="btn btn-warning"  @onclick="async _=> await AddLog(LinkedinOfUser:linkedin.FullLink)" href="https://@linkedin.FullLink">Перейти</a>
                                                         }
                                                     </td>
                                                     <td>
@@ -330,14 +342,14 @@
                 </div>
                 <!-- CENTER div End -->
                 <!-- RIGHT div Begin -->
-                <div class="right bg-black">
+                <div class="right">
 
                     @if (user != null && user.Identity.IsAuthenticated && TempService.CurrentUser != null)
                     {
                         <div class="flex-center user">
                             @TempService.CurrentUser.Email <br />
                             <br />
-                            <button @onclick="async _=> await Logout()">Выйти</button>
+                            <button class="btn btn-warning"  @onclick="async _=> await Logout()">Выйти</button>
                         </div>
                     }
                     else
@@ -347,7 +359,7 @@
                             <input type="text" name="Email" @bind="login" />
                             <p>Введите пароль </p>
                             <input type="password" name="Password" @bind="password" />
-                            <input type="submit" value="Войти" class="btn btn-outline-dark" @onclick="async _=> await Login()" />
+                            <input type="submit" value="Войти" class="btn btn-warning"  @onclick="async _=> await Login()" />
                         </div>
                     }
 
@@ -378,7 +390,7 @@
             </ContentTemplate>
             <LoadingTemplate>
                 <!-- The Modal -->
-                <div class="modal bg-black" style="@LoaderDisplay">
+                <div class="modal" style="@LoaderDisplay">
                     <!-- Modal content -->
                     <div class="modal-content">
                         <p>@MessageForLoading</p>
@@ -399,11 +411,11 @@
 @if (user != null && user.Identity.IsAuthenticated && TempService.CurrentUser != null)
 {
     <!-- The Modal -->
-    <div class="modal bg-black" style="display:@AddCompanyModalDisplay">
+    <div class="modal" style="display:@AddCompanyModalDisplay">
 
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" @onclick="Close">&times;</span>
+            <span class="btn btn-danger" @onclick="Close">&times;</span>
             <label class="red" style="display:@ExceptionLabelDisplay">@ExceptionLabel</label>
             <table>
                 <tbody>
@@ -445,16 +457,16 @@
                     <option value="@country.Id">@country.Name</option>
                 }
             </select><br>
-            <button @onclick="async _=>await AddCompany()">OK</button><button @onclick="Close">Cancel</button>
+            <button class="btn btn-warning" @onclick="async _=>await AddCompany()">OK</button><button class="btn btn-danger"  @onclick="Close">Cancel</button>
         </div>
     </div>
 
     <!-- The Modal -->
-    <div class="modal bg-black" style="display:@SendLemmlistModalDisplay">
+    <div class="modal" style="display:@SendLemmlistModalDisplay">
 
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" @onclick="Close">&times;</span>
+            <span class="btn btn-danger" @onclick="Close">&times;</span>
             <p>Добавить в рекламмную компанию @checkedContacts.Count людей</p>
             @if (SendForContacts != null)
             {
@@ -463,54 +475,54 @@
                     @contact.Email <br />
                 }
             }
-            <button @onclick="async _=>await SendLemlist()">OK</button><button @onclick="Close">Cancel</button>
+            <button class="btn btn-warning" @onclick="async _=>await SendLemlist()">OK</button><button class="btn btn-danger" @onclick="Close">Cancel</button>
         </div>
     </div>
 
     <!-- The Modal -->
-    <div class="modal bg-black" style="display:@ImportContactsModalDisplay">
+    <div class="modal" style="display:@ImportContactsModalDisplay">
 
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" @onclick="Close">&times;</span>
+            <span class="btn btn-danger" @onclick="Close">&times;</span>
             <p>A single file input that uploads automatically on file selection</p>
             <p>@UploadStatus</p>
             <InputFile OnChange="HandleSelection" />
-            <button @onclick="Close">Cancel</button>
+            <button class="btn btn-danger" @onclick="Close">Cancel</button>
         </div>
     </div>
 
     <!-- The Modal -->
-    <div class="modal bg-black" style="display:@AddLemlistStatisticModalDisplay">
+    <div class="modal" style="display:@AddLemlistStatisticModalDisplay">
 
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" @onclick="Close">&times;</span>
+            <span class="btn btn-danger" @onclick="Close">&times;</span>
             <p>Отправлена @AddLemlistStatistic.successCount провалена @AddLemlistStatistic.failedCount</p>
-            <button @onclick="Close">Cancel</button>
+            <button class="btn btn-danger" @onclick="Close">Cancel</button>
         </div>
     </div>
 
     <!-- The Modal -->
-    <div class="modal bg-black" style="display:@MessageModalDisplay">
+    <div class="modal" style="display:@MessageModalDisplay">
 
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" @onclick="Close">&times;</span>
+            <span class="btn btn-danger"  @onclick="Close">&times;</span>
             <p>@MessageForModal</p>
-            <button @onclick="Close">Cancel</button>
+            <button class="btn btn-danger" @onclick="Close">Cancel</button>
         </div>
     </div>
 
     <!-- The Modal -->
-    <div class="modal bg-black" style="display:@AddRegionModalDisplay">
+    <div class="modal" style="display:@AddRegionModalDisplay">
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" @onclick="Close">&times;</span>
+            <span class="btn btn-danger" @onclick="Close">&times;</span>
             <label>Добавить новый Регион </label>
             <input type="text" @bind="NewRegionName">
             <button @onclick="async _=>await AddRegion()">Добавить</button>
-            <button @onclick="Close">Cancel</button>
+            <button class="btn btn-danger" @onclick="Close">Cancel</button>
             <table>
                 <tbody>
                     @foreach (var region in regions)
@@ -529,10 +541,10 @@
         </div>
     </div>
     <!-- The Modal -->
-    <div class="modal bg-black" style="display:@AddCountryModalDisplay">
+    <div class="modal" style="display:@AddCountryModalDisplay">
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" @onclick="Close">&times;</span>
+            <span class="btn btn-danger" @onclick="Close">&times;</span>
             <label class="red" style="display:@ExceptionLabelDisplay">@ExceptionLabel</label>
             <label>Добавить новую страну </label>
             <table>
@@ -563,8 +575,8 @@
                     <option value="@region.Id">@region.Name</option>
                 }
             </select><br>
-            <button @onclick="async _=>await AddCountry()">Добавить</button>
-            <button @onclick="Close">Cancel</button>
+            <button class="btn btn-warning" @onclick="async _=>await AddCountry()">Добавить</button>
+            <button class="btn btn-danger" @onclick="Close">Cancel</button>
             <table>
                 <tbody>
                     @foreach (var country in countries)
@@ -587,10 +599,10 @@
     </div>
 
     <!-- The Modal -->
-    <div class="modal bg-black" style="display:@NewContactModalDisplay">
+    <div class="modal" style="display:@NewContactModalDisplay">
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close" @onclick="Close">&times;</span>
+            <span class="btn btn-danger" @onclick="Close">&times;</span>
             <label class="red" style="display:@ExceptionLabelDisplay">@ExceptionLabel</label>
             @if (SelectedCompany != null)
             {
@@ -636,8 +648,8 @@
                     </tr>
                 </tbody>
             </table>
-            <button @onclick="async _=>await AddNewContact()">Добавить</button>
-            <button @onclick="Close">Cancel</button>
+            <button class="btn btn-warning" @onclick="async _=>await AddNewContact()">Добавить</button>
+            <button class="btn btn-danger" @onclick="Close">Cancel</button>
         </div>
     </div>
 }

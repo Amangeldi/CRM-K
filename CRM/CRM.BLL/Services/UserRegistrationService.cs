@@ -28,8 +28,7 @@ namespace CRM.BLL.Services
                 Email = CreateUserDTO.Email,
                 FirstName = CreateUserDTO.FirstName,
                 LastName = CreateUserDTO.LastName,
-                UserName = CreateUserDTO.Email,
-
+                UserName = CreateUserDTO.Email
             };
 
             var result = await _userManager.CreateAsync(user, CreateUserDTO.Password);

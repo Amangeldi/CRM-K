@@ -1,26 +1,19 @@
 ﻿* {
-    font-size: 20px;
+    margin:0;
 }
 body{
     overflow:hidden;
 }
-.title {
-    font-size: 23px;
-}
+
 
 div {
-    color: #dedede;
     font-weight: 400;
     font-size: 14px;
     font-family: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,sans-serif;
     line-height: 1.35715;
 }
-.bg-black {
-    background-color: #2a2a2a;
-}
 
 a {
-    color: white;
     text-decoration: none;
 }
 
@@ -30,13 +23,11 @@ a {
 
 header {
     min-height: 90px;
-    background-color: #2a2a2a;
-    color: #dedede;
     font-weight: 400;
     font-size: 14px;
     font-family: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,sans-serif;
     line-height: 1.35715;
-    border-bottom: solid 1px #dedede;
+    border-bottom: solid 1px #f0ad4e;
 }
 header div button{
     margin: 5px;
@@ -54,13 +45,11 @@ header div button{
 }
 footer {
     min-height: 10px;
-    background-color: #2a2a2a;
-    color: #dedede;
     font-weight: 400;
     font-size: 14px;
     font-family: 'Helvetica Neue','Segoe UI',Helvetica,Verdana,sans-serif;
     line-height: 1.35715;
-    border-bottom: solid 1px #dedede;
+    border-bottom: solid 1px #f0ad4e;
     overflow: hidden
 }
 .left {
@@ -68,23 +57,28 @@ footer {
     min-height: 230px;
     height: 100%;
     display: grid;
-    border-right: solid 1px #dedede;
-    
+    border-right: solid 1px #f0ad4e;
     /*grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
 }
 
     .left > div {
         padding: 5px;
     }
-
+.title {
+    font-size: 23px;
+    padding-left: 12px;
+    border-bottom: solid 1px #f0ad4e;
+}
 .title-new-companies {
-    border-bottom: solid 1px #dedede;
     grid-area: title-new-companies;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-areas: "titleName titleName titleName titleName titleName plus upload";
+    /*grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
+    grid-template-areas: "titleName titleName titleName titleName titleName plus upload" 
+                        "pagination pagination pagination pagination pagination pagination pagination";
 }
-
+.grid-pagination {
+    grid-area: pagination;
+}
 .titleName {
     grid-area: titleName;
 }
@@ -92,13 +86,16 @@ footer {
 .plus {
     grid-area: plus;
 }
-
+    .plus:hover {
+        cursor: pointer;
+    }
 .upload {
     grid-area: upload;
 }
-
+    .upload:hover {
+        cursor: pointer;
+    }
 .title-qualified {
-    border-bottom: solid 1px #dedede;
     grid-area: title-qualified;
 }
 
@@ -107,8 +104,7 @@ footer {
 }
 
 .content {
-    border-bottom: solid 1px #dedede;
-    color: #484848;
+    border-bottom: solid 1px #f0ad4e;
     overflow: hidden;
     overflow-y: auto;
 }
@@ -122,7 +118,6 @@ footer {
 }
 
 .title-not-qualified {
-    border-bottom: solid 1px #dedede;
     grid-area: title-not-qualified;
 }
 
@@ -137,7 +132,7 @@ footer {
 }
 
 .right {
-    border-left: solid 1px #dedede;
+    border-left: solid 1px #f0ad4e;
     grid-area: c;
     min-height: 230px;
     height: 100%;
@@ -148,7 +143,7 @@ footer {
 }
 
 .company-information {
-    border-bottom: solid 1px #dedede;
+    border-bottom: solid 1px #f0ad4e;
     grid-area: company-information;
 }
 
@@ -158,7 +153,7 @@ footer {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
     grid-template-areas: "not-q-div q-div";
-    border-bottom: solid 1px #dedede;
+    border-bottom: solid 1px #f0ad4e;
 }
 
 .prospect-finder {
@@ -173,9 +168,9 @@ footer {
 
 .user {
     grid-area: user;
-    border-bottom: solid 1px #dedede;
-    display:flex;
-    flex-direction:column;
+    border-bottom: solid 1px #f0ad4e;
+    display: flex;
+    flex-direction: column;
 }
 
 .logs {
@@ -187,16 +182,16 @@ footer {
     font: inherit;
     font-size: 100%;
     vertical-align: baseline;
-    border: black 1px solid;
+    border: #f0ad4e 1px solid;
 }
 
 .log-user {
+    color: black;
     font-weight: bold;
     font-size: 13px;
     display: block;
     cursor: pointer;
     text-decoration: none;
-    color: #07C;
     padding-right: 12px;
     word-break: break-word;
 }
@@ -207,7 +202,6 @@ footer {
     vertical-align: baseline;
     margin: 3px 0;
     font-weight: bold;
-    color: white;
     margin-right: 7px;
     word-break: break-word;
 }
@@ -233,9 +227,8 @@ footer {
 table {
     border-spacing: 0;
     border-collapse: collapse; /*убираем пустые промежутки между ячейками*/
-    border: 3px solid grey; /*устанавливаем для таблицы внешнюю границу серого цвета толщиной 3px*/
+    border: 1px solid #f0ad4e; /*устанавливаем для таблицы внешнюю границу серого цвета толщиной 3px*/
     padding: 9px 8px;
-    background: #343434;
     width: 100%;
     text-align: center;
 }
@@ -244,26 +237,37 @@ tbody tr:hover td {
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #2a2a2a;
+    background-color: #dedede;
 }
 
 th {
-    color: #dedede;
     text-align: center;
     font-size: 12px;
     padding: 1px 0 6px;
 }
 
 td {
-    color: #dedede;
     text-align: center;
     font-size: 12px;
     padding: 1px 0 6px;
 }
 
 th, td {
-    border: 1px solid grey;
+    border: 1px solid #f0ad4e;
 }
+
+    td a {
+        margin: 0;
+        text-align: center;
+        font-size: 12px;
+        padding: 1px 0 6px;
+    }
+    td p {
+        margin: 0;
+        text-align: center;
+        font-size: 12px;
+        padding: 1px 0 6px;
+    }
 
 .modal {
     position: fixed; /* Stay in place */
@@ -280,10 +284,10 @@ th, td {
 
 /* Modal Content */
 .modal-content {
-    background-color: #2a2a2a;
+    background-color: #d9d9d9;
     margin: auto;
     padding: 20px;
-    border: 1px solid #888;
+    border: 1px solid #f0ad4e;
     width: 80%;
 }
 
@@ -302,17 +306,20 @@ th, td {
 }
 .pagination-element {
     border: none;
-    border-bottom: 1px solid black;
     padding-bottom: 3px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    gap: 1px 1px;
-    grid-template-areas: "prev current current current next";
+    grid-template-areas: "prev current current pagesCount next";
 }
 .prev {
     grid-area: prev;
 }
-
+    .prev:hover {
+        cursor: pointer;
+    }
+.pages-count {
+    grid-area: pagesCount;
+}
 .current {
     grid-area: current;
 }
@@ -320,47 +327,22 @@ th, td {
 .next {
     grid-area: next;
 }
+    .next:hover {
+        cursor: pointer;
+    }
 .company-element {
     border: none;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #f0ad4e;
     padding-bottom: 3px;
+    padding: 12px;
 }
 
     .company-element:hover {
         background: #b9b8b8;
+        cursor: pointer;
+        text-decoration-color: red;
     }
-button {
-    padding: 9px;
-    background-color: #323232;
-    color: #dedede;
 
-}
-    button:hover {
-        background-color: #2a2a2a;
-    }
-    button:active {
-        background-color: rgba(209,209,209,.2);
-        color: #dedede;
-    }
-    button:after {
-        content: "";
-        pointer-events: none;
-        position: absolute;
-        top: -1px;
-        bottom: -1px;
-        right: -1px;
-        left: -1px;
-        border-right: 1px solid #1ca8dd;
-        border-left: 1px solid #1ca8dd;
-        border-top: 1px solid #1ca8dd;
-        border-bottom: 1px solid #1ca8dd;
-        z-index: 1;
-    }
-    button:disabled {
-        opacity: 1;
-        background-color: #1b1b1b;
-        color: #a3a3a3;
-    }
 .ui-progressbar {
     height: 0.25rem;
 }

@@ -96,13 +96,7 @@ namespace CRM.BLL.Services
                 }
                 Company NewCompany = oldCompanies.Where(p => p.NormalizeCompanyLegalName == company.CompanyLegalName.ToLower()).FirstOrDefault();
                 
-                if(company.CompanyLegalName== "Google")
-                {
-                    if(oldCompanies.Where(p => p.CompanyLegalName == "Google").FirstOrDefault()!=null)
-                    {
-
-                    }
-                }
+                
                 if (NewCompany == null && !NewLagalNames.Contains(company.CompanyLegalName.ToLower()))
                 {
                     NewLagalNames.Add(company.CompanyLegalName.ToLower());
@@ -139,48 +133,7 @@ namespace CRM.BLL.Services
                 }
             }
             await db.SaveChangesAsync();
-            #region
-            /*foreach (var company in Companies ?? Enumerable.Empty<CompanyCsvModel>())
-            {
-                List<Region> CompanyRegions = regions.Where(p => p.Name == company.RegionName).ToList();
-                Region region;
-                if (CompanyRegions.Count==0)
-                {
-                    region = await _regionService.CreateRegion(company.RegionName);
-                    await _tempService.UpdateRegions();
-                }
-                else
-                {
-                    region = CompanyRegions.First();
-                }
-                CountryDTO countryDTO = _singleTemp.Countries.Where(p => p.RegionId == region.Id&&p.Name==company.HGBasedInCountry).FirstOrDefault();
-                //Country country;
-                if (countryDTO == null)
-                {
-                    CountryDTO country = new CountryDTO { Name = company.HGBasedInCountry, RegionId = region.Id};
-                    await _countryService.CreateCountry(country);
-                    await _tempService.UpdateCountries();
-                    countryDTO = _singleTemp.Countries.Where(p => p.RegionId == region.Id && p.Name == company.HGBasedInCountry).FirstOrDefault();
-                }
-                CompanyRegistrationDTO newCompany = new CompanyRegistrationDTO
-                {
-                    CompanyLegalName = company.CompanyLegalName,
-                    TradingName = company.TradingName,
-                    Website = company.Website,
-                    CompanyLinkedinLink = company.CompanyLinkedinLink,
-                    HGBasedInCountryId = countryDTO.Id
-                };
-                NewCompanies.Add(newCompany);
-            }
-            try
-            {
-                await _companyService.CreateRangeCompanies(NewCompanies);
-            }
-            catch (Exception ex)
-            {
-
-            }*/
-            #endregion
+            
             string FixLinkedinLink(string LinkedinLink)
             {
                 if (LinkedinLink.Length > 12 && LinkedinLink.Substring(0, 12) == "https://www.")

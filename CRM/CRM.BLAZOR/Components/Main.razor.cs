@@ -111,6 +111,7 @@ namespace CRM.BLAZOR.Components
         public string MessageForHeader = "";
         public string ActionMessage = "";
         public string ExceptionLabel = "";
+        public string MissingText = "Отсутсвует";
         protected IEnumerable<ContactDTO> SelectedCompanyContacts;
         protected IEnumerable<CountryDTO> countries;
         protected IEnumerable<RegionDTO> regions;
@@ -129,6 +130,9 @@ namespace CRM.BLAZOR.Components
         public int CurrentNewCompaniesPage = 1;
         public int CurrentQualifiedCompaniesPage = 1;
         public int CurrentNotQualifiedCompaniesPage = 1;
+        public int NewCompaniesPagesCount;
+        public int QualifiedCompaniesPagesCount;
+        public int NotQualifiedCompaniesPagesCount;
         /// controls END
         /// logs div END
         #endregion
@@ -194,8 +198,11 @@ namespace CRM.BLAZOR.Components
 
         public async Task RenderUpdate()
         {
+            NewCompaniesPagesCount = SingleTemp.NewCompanies.Count() / PAGE_SIZE + 1;
             NewCompanies = TempService.GetPage(SingleTemp.NewCompanies, CurrentNewCompaniesPage, PAGE_SIZE);
+            QualifiedCompaniesPagesCount = SingleTemp.QualifiedCompanies.Count() / PAGE_SIZE + 1;
             QualifiedCompanies = TempService.GetPage(SingleTemp.QualifiedCompanies, CurrentQualifiedCompaniesPage, PAGE_SIZE);
+            NotQualifiedCompaniesPagesCount = SingleTemp.NotQualifiedCompanies.Count() / PAGE_SIZE + 1;
             NotQualifiedCompanies = TempService.GetPage(SingleTemp.NotQualifiedCompanies, CurrentNotQualifiedCompaniesPage, PAGE_SIZE);
             countries = SingleTemp.Countries;
             regions = SingleTemp.Regions;
