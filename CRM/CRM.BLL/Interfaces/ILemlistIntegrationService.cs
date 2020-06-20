@@ -11,5 +11,6 @@ namespace CRM.BLL.Interfaces
     {
         Task<IEnumerable<AdvertisingCompany>> GetAdvertisingCompanies();
         Task<IEnumerable<AddLeadInCampaignResult>> AddLeadsInCampaign(List<ContactDTO> contacts);
+        Task<IEnumerable<AdvertisingCompanyStatisticDTO>> GetAdvertisingCompanyStatistics(string advertisingCompanyId);
     }
 }

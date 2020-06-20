@@ -74,7 +74,7 @@ namespace CRM.BLAZOR.Components
         protected AuthenticationState authState;
         protected ClaimsPrincipal user;
         public CompanyModel SelectedCompany;
-
+        public IEnumerable<AdvertisingCompany> advertisingCompanies;
         protected int SelectedId;
         public string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         public string darkStyle;
@@ -106,6 +106,7 @@ namespace CRM.BLAZOR.Components
         public string NewContactModalDisplay = "none";
         public string MessageModalDisplay = "none";
         public string LoaderDisplay = "none";
+        public string AdvertisingCompanyStatisticsModalDisplay = "none";
         public string MessageForModal = "";
         public string MessageForLoading = "";
         public string MessageForHeader = "";
@@ -133,6 +134,7 @@ namespace CRM.BLAZOR.Components
         public int NewCompaniesPagesCount;
         public int QualifiedCompaniesPagesCount;
         public int NotQualifiedCompaniesPagesCount;
+        public List<(string, IEnumerable<AdvertisingCompanyStatisticDTO>)> CompanyStatistics;
         /// controls END
         /// logs div END
         #endregion
@@ -671,9 +673,30 @@ namespace CRM.BLAZOR.Components
             await RenderUpdate();
             await InvokeAsync(StateHasChanged);
         }
+        public async Task OpenModalForAdvertisingCompanyStatistics()
+        {
+
+            MessageForLoading = "Загружаем статистику ";
+            LoaderDisplay = "block";
+            isLoading = true;
+            advertisingCompanies = await LemlistIntegrationService.GetAdvertisingCompanies();
+
+            CompanyStatistics = new List<(string, IEnumerable<AdvertisingCompanyStatisticDTO>)>();
+            foreach(var company in advertisingCompanies)
+            {
+                IEnumerable<AdvertisingCompanyStatisticDTO> statisticDTO = await LemlistIntegrationService.GetAdvertisingCompanyStatistics(company.Id);
+                CompanyStatistics.Add((company.Id, statisticDTO));
+            }
+            LoaderDisplay = "none";
+            isLoading = false;
+            AdvertisingCompanyStatisticsModalDisplay = "block";
+            await RenderUpdate();
+            await InvokeAsync(StateHasChanged);
+        }
 
         public async Task Close()
         {
+            AdvertisingCompanyStatisticsModalDisplay = "none";
             AddCountryModalDisplay = "none";
             AddCompanyModalDisplay = "none";
             NewContactModalDisplay = "none";

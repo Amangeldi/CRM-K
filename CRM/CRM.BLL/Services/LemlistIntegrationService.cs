@@ -10,6 +10,9 @@ using CRM.DAL.Entities;
 using System.Linq;
 using CRM.BLL.DTO;
 using CRM.DAL.EF;
+using CsvHelper;
+using System.IO;
+using System.Globalization;
 
 namespace CRM.BLL.Services
 {
@@ -73,6 +76,32 @@ namespace CRM.BLL.Services
                 advertisingCompanies = JsonSerializer.Deserialize<IEnumerable<AdvertisingCompany>>(result).ToList();
             }
             return advertisingCompanies;
+        }
+
+        public async Task<IEnumerable<AdvertisingCompanyStatisticDTO>> GetAdvertisingCompanyStatistics(string advertisingCompanyId)
+        {
+            using HttpClient Http = new HttpClient();
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authenticationBytes));
+            var response = await Http.GetAsync("https://api.lemlist.com/api/campaigns/"+advertisingCompanyId+"/export");
+            List<AdvertisingCompanyStatisticDTO> advertisingCompanyStatisticDTOs = new List<AdvertisingCompanyStatisticDTO>();
+            if(response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsStringAsync().Result;
+                byte[] byteArray = Encoding.ASCII.GetBytes(result);
+                MemoryStream stream = new MemoryStream(byteArray);
+                using (StreamReader streamReader = new StreamReader(stream))
+                {
+                    using (CsvReader csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+                    {
+                        csvReader.Configuration.Delimiter = ",";
+                        csvReader.Configuration.HeaderValidated = null;
+                        csvReader.Configuration.MissingFieldFound = null;
+                        advertisingCompanyStatisticDTOs = csvReader.GetRecords<AdvertisingCompanyStatisticDTO>().ToList();
+                    }
+                }
+                //advertisingCompanyStatisticDTOs = JsonSerializer.Deserialize<IEnumerable<AdvertisingCompanyStatisticDTO>>(result).ToList();
+            }
+            return advertisingCompanyStatisticDTOs;
         }
     }
 }
